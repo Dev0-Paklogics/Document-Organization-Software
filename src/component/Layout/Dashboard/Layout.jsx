@@ -1,5 +1,6 @@
 import {Outlet} from "react-router"
 import {SideBarDashboard} from "./Sidebar"
+import {DashboardNavbar} from "./Navbar";
 
 export const DashboardLayot = () => {
     return (
@@ -9,7 +10,8 @@ export const DashboardLayot = () => {
           <SideBarDashboard />
   
           {/* Main Content */}
-          <main className="flex-1 p-6 overflow-auto">
+          <main className="flex-1  overflow-auto">
+          <DashboardNavbar/>
             <Outlet />
           </main>
         </div>

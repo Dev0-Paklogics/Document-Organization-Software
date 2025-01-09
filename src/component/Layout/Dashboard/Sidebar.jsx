@@ -1,81 +1,117 @@
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { AiFillHome } from "react-icons/ai";
-import DashbordIcon1 from "assets/icons/dashboard-icon1.png"
-import DocManagment from "assets/icons/Layer_1.png"
-import SumariesIcon from "assets/icons/Summarie-Icon.png"
-import UserProfile from "assets/icons/User-profile-Icon.png"
-import DocOverview from "assets/icons/Document-Overview-Icon.png"
-import Setting from "assets/icons/Settings-Icon.png"
-import Logout from "assets/icons/Logout-Icon.png"
+import { RxDashboard } from "react-icons/rx";
+import { IoIosDocument } from "react-icons/io";
+import { MdSummarize } from "react-icons/md";
+import { MdEditDocument } from "react-icons/md";
+import { FaUser } from "react-icons/fa";
+import { HiDocumentSearch } from "react-icons/hi";
+import { IoSettingsSharp } from "react-icons/io5";
+import { TbLogout } from "react-icons/tb";
+import { IoIosHelpCircle } from "react-icons/io";
 import { FaWallet, FaShoppingCart, FaCrown } from "react-icons/fa";
 
 const sidebarList = [
   {
     name: "Dashboard",
-    icon: DashbordIcon1,
+    icon: <RxDashboard />,
     link: "/",
   },
   {
     name: "Document Management",
-    icon: DocManagment,
-    link: "/wdkwdk",
+    icon: <IoIosDocument />,
+    link: "/document-managment",
   },
   {
     name: "Summaries",
-    icon: SumariesIcon,
-    link: "/amsodk",
+    icon: <MdEditDocument />,
+    link: "/",
   },
   {
     name: "User Profile",
-    icon: UserProfile,
-    link: "/userProfile",
+    icon: <FaUser />,
+    link: "/",
   },
   {
     name: "Document Overview",
-    icon: DocOverview,
-    link: "/docoverviww",
+    icon: <HiDocumentSearch />,
+    link: "/document-overview",
   },
   {
     name: "Settings",
-    icon: Setting,
-    link: "/setting",
+    icon: <IoSettingsSharp />,
+    link: "/",
   },
   {
     name: "Logout",
-    icon: Logout,
-    link: "/Logout",
+    icon: <TbLogout />,
+    link: "/",
+  },
+  {
+    name: "Help Center",
+    icon: <IoIosHelpCircle />,
+    link: "/",
   },
 ];
 
 export const SideBarDashboard = () => {
-    return (
-      <aside className="w-64 bg-blue-600 text-white h-full flex flex-col overflow-hidden">
-        <div className="p-6 text-lg font-bold border-b border-blue-500">
-          Logo Here
-        </div>
-  
-        <nav className="flex-1 overflow-auto">
+  const location = useLocation();
+  const [isOpen, setIsOpen] = useState(true); // State to toggle sidebar
+
+  const handleToggle = () => {
+    setIsOpen(!isOpen);
+  };
+
+  return (
+    <div className="flex">
+      {/* Hamburger Icon */}
+      <button
+        className="lg:hidden p-4 text-white"
+        onClick={handleToggle}
+      >
+        <span className="text-3xl text-gray-600">&#9776;</span> 
+      </button>
+
+      {/* Sidebar */}
+      <aside
+        className={`w-80 custom-scrollbar overflow-y-auto text-white h-full flex flex-col border-r-2 transition-all ${
+          isOpen ? "block" : "hidden"
+        } lg:block`} // Hide sidebar on small screens if closed
+      >
+        <div className="p-6 text-[#378AF2] text-[36px] font-bold">Logo Here</div>
+
+        <nav className="flex-1">
           <ul className="space-y-2">
-            {sidebarList.map((item, index) => (
-              <li key={index}>
-                <Link
-                  to={item.link}
-                  className="flex items-center py-3 px-6 hover:bg-blue-700 cursor-pointer"
-                >
-                  <span className="text-xl mr-3">{item.icon}</span>
-                  <span>{item.name}</span>
-                </Link>
-              </li>
-            ))}
+            {sidebarList.map((item, index) => {
+              const isActive = location.pathname === item.link;
+
+              return (
+                <li key={index}>
+                  <Link
+                    to={item.link}
+                    className={`flex items-center py-3 px-6 rounded-r-full cursor-pointer ${
+                      isActive
+                        ? "bg-[#378AF2] text-white h-[53px] w-72"
+                        : "text-gray-400"
+                    }`}
+                  >
+                    <span className="mr-4">
+                      {React.cloneElement(item.icon, {
+                        color: isActive ? "white" : "#3A8EF6",
+                        size: 20,
+                      })}
+                    </span>
+                    <span className="text-[18px]">{item.name}</span>
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </nav>
-  
-        <div className="py-4 px-6 border-t border-blue-500">
-          <button className="w-full text-left hover:bg-blue-700 py-2 rounded">
-            Help Center
-          </button>
-        </div>
       </aside>
-    );
-  };
-  
+
+     
+    </div>
+  );
+};
