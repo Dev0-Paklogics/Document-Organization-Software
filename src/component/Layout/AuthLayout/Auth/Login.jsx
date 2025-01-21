@@ -1,9 +1,15 @@
 import { Layout } from "./Lay";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { loginFunApi } from "store/auth/services";
+import { useDispatch, useSelector } from "react-redux";
+import ButtonWithLoading from "component/LoadingButton";
+import { Link } from "react-router-dom";
 
 export const Login = () => {
-  // Define validation schema using Yup
+  const dispatch = useDispatch();
+  const { isLoading } = useSelector((state) => state.auth);
+
   const validationSchema = Yup.object({
     email: Yup.string()
       .email("Invalid email address")
@@ -13,7 +19,6 @@ export const Login = () => {
       .required("Password is required"),
   });
 
-  // Formik setup
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -21,6 +26,13 @@ export const Login = () => {
     },
     validationSchema,
     onSubmit: (values) => {
+      dispatch(
+        loginFunApi({
+          data: values,
+
+          onSuccess: () => {},
+        })
+      );
       console.log("Form submitted with values:", values);
     },
   });
@@ -53,7 +65,6 @@ export const Login = () => {
               <p className="text-red-500 text-sm mt-1">{formik.errors.email}</p>
             )}
           </div>
-
           {/* Password Input */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
@@ -78,19 +89,21 @@ export const Login = () => {
               </p>
             )}
           </div>
-
           {/* Login Button */}
-          <button
-            type="submit"
-            className="w-full bg-black text-white py-3 rounded-md"
-          >
+          <ButtonWithLoading type="submit" isLoading={isLoading}>
             Login
-          </button>
+          </ButtonWithLoading>
+          <div className="w-full flex mx-auto items-center space-x-2">
+            <p className="text-sm text-gray-600">New User?</p>
+            <Link
+              to="/signup"
+              className="text-sm text-black-500 underline"
+            >
+              SIGN UP HERE
+            </Link>
+          </div>{" "}
         </form>
       </div>
-      
     </Layout>
-    
   );
 };
-

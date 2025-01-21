@@ -1,14 +1,21 @@
+import ButtonWithLoading from "component/LoadingButton";
 import { Layout } from "./Lay";
 import { useFormik } from "formik";
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { registerFunApi } from "store/auth/services";
 import * as Yup from "yup";
+import { useNavigate } from "react-router";
 
 export const Signup = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [showPassword, setShowPassword] = useState(false);
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
+  // const togglePasswordVisibility = () => {
+  //   setShowPassword(!showPassword);
+  // };
 
   const validationSchema = Yup.object({
     firstName: Yup.string().required("first name is required"),
@@ -35,6 +42,17 @@ export const Signup = () => {
     },
     validationSchema,
     onSubmit: (values) => {
+      dispatch(
+        registerFunApi({
+          data: values,
+
+          onSuccess: () => {
+
+            // navigate("/health-provider"); // Replace "/success-screen" with your desired route.
+
+          }
+        })
+      );
       console.log("Form submitted with values:", values);
     },
   });
@@ -144,7 +162,7 @@ export const Signup = () => {
               </p>
             )}
           </div>
-          
+
           {/* Confirm Password Input */}
           <div className="relative">
             <label className="absolute -top-2.5 left-3 bg-white px-1 text-sm text-gray-500">
@@ -212,12 +230,13 @@ export const Signup = () => {
             </button> */}
           </div>
 
-          <button
+          <ButtonWithLoading
             type="submit"
             className="w-full bg-black text-white py-3 rounded-md"
           >
             Get Started
-          </button>
+          </ButtonWithLoading>
+
         </form>
       </div>
     </Layout>

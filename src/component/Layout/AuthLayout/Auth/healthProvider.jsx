@@ -26,7 +26,7 @@ export const HealthProvider = () => {
   return (
     <Layout>
       <div className="w-3/4">
-        <h2 className="text-xl font-bold mb-4">Create an Account</h2>
+        <h2 className="text-xl font-bold mb-4">Health Provider Details</h2>
         <form className="space-y-4">
           <div className="relative">
             <label className="absolute -top-2.5 left-3 bg-white px-1 text-sm text-gray-500">
