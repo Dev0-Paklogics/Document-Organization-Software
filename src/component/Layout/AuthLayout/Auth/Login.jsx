@@ -3,11 +3,13 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { loginFunApi } from "store/auth/services";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router";
 import ButtonWithLoading from "component/LoadingButton";
 import { Link } from "react-router-dom";
 
 export const Login = () => {
   const dispatch = useDispatch();
+    const navigate = useNavigate();
   const { isLoading } = useSelector((state) => state.auth);
 
   const validationSchema = Yup.object({
@@ -29,9 +31,10 @@ export const Login = () => {
       dispatch(
         loginFunApi({
           data: values,
-
-          onSuccess: () => {},
-        })
+          onSuccess: () => {
+            navigate("/");
+          },
+        }) 
       );
       console.log("Form submitted with values:", values);
     },
@@ -93,7 +96,7 @@ export const Login = () => {
           <ButtonWithLoading type="submit" isLoading={isLoading}>
             Login
           </ButtonWithLoading>
-          <div className="w-full flex mx-auto items-center space-x-2">
+          <div className="w-full flex  justify-center mx-auto items-center space-x-2">
             <p className="text-sm text-gray-600">New User?</p>
             <Link
               to="/signup"

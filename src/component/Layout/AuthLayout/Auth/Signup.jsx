@@ -5,17 +5,13 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { registerFunApi } from "store/auth/services";
 import * as Yup from "yup";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 export const Signup = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
-
-  // const togglePasswordVisibility = () => {
-  //   setShowPassword(!showPassword);
-  // };
 
   const validationSchema = Yup.object({
     firstName: Yup.string().required("first name is required"),
@@ -46,10 +42,10 @@ export const Signup = () => {
         registerFunApi({
           data: values,
 
-          onSuccess: () => {
-
-            // navigate("/health-provider"); // Replace "/success-screen" with your desired route.
-
+          onSuccess: (user) => {
+            console.log("user 50",user)
+            localStorage.setItem("user",JSON.stringify(user))
+            navigate("/health-provider"); // Replace "/success-screen" with your desired route.
           }
         })
       );
@@ -236,8 +232,18 @@ export const Signup = () => {
           >
             Get Started
           </ButtonWithLoading>
+          
 
         </form>
+        <div className="w-full flex  mt-4 justify-center mx-auto items-center space-x-2">
+            <p className="text-sm text-gray-600">Already have an account?</p>
+            <Link
+              to="/login"
+              className="text-sm text-black-500 underline"
+            >
+              LOGIN HERE
+            </Link>
+          </div>{" "}
       </div>
     </Layout>
   );

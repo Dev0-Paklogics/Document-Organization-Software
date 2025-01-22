@@ -31,7 +31,7 @@ const sidebarList = [
   {
     name: "User Profile",
     icon: <FaUser />,
-    link: "/",
+    link: "/profile-update",
   },
   {
     name: "Document Overview",
@@ -77,7 +77,7 @@ export const SideBarDashboard = () => {
       <aside
         className={`w-80 custom-scrollbar overflow-y-auto text-white h-full flex flex-col border-r-2 transition-all ${
           isOpen ? "block" : "hidden"
-        } lg:block`} // Hide sidebar on small screens if closed
+        } lg:block`} 
       >
         <div className="p-6 text-[#378AF2] text-[36px] font-bold">Logo Here</div>
 
@@ -110,8 +110,6 @@ export const SideBarDashboard = () => {
           </ul>
         </nav>
       </aside>
-
-     
     </div>
   );
 };

@@ -1,47 +1,9 @@
-// import React, { useState } from "react";
-// import UploadIcon from "../../assets/icons/upload-icon.png"
-// export const DashboardHomePage = () => {
-//   const [file, setFile] = useState(null);
-
-//   const handleFileChange = (event) => {
-//     setFile(event.target.files[0]);
-//   };
-
-//   const handleDrop = (event) => {
-//     event.preventDefault();
-//     setFile(event.dataTransfer.files[0]);
-//   };
-
-//   const handleDragOver = (event) => {
-//     event.preventDefault();
-//   };
-
-//   return (
-//     <div className="flex justify-center items-center h-screen bg-gray-100">
-//       <div
-//         className="w-[700px] h-[350px] border-2 border-dashed border-gray-300 bg-white flex flex-col items-center justify-center  rounded-md"
-//         onDrop={handleDrop}
-//         onDragOver={handleDragOver}
-//       >
-//         {/* <div className="text-gray-500 text-4xl"></div> */}
-// <img src={UploadIcon} alt="UploadIcon"  />
-//         <p className="text-black font-medium mt-2">Select a file or drag and drop here</p>
-//         <p className="text-gray-400 text-sm">JPG, PNG or PDF, file size no more than 10MB</p>
-//         <label className="mt-4 bg-blue-500 text-white px-4 py-2 rounded cursor-pointer">
-//           Select File
-//           <input type="file" className="hidden" onChange={handleFileChange} />
-//         </label>
-//         {file && <p className="mt-2 text-sm text-gray-600">Selected: {file.name}</p>}
-//       </div>
-//     </div>
-//   );
-// };
 import React, { useState } from "react";
 import UploadIcon from "../../assets/icons/upload-icon.png";
 import { AiFillDelete } from "react-icons/ai";
 
 export const DashboardHomePage = () => {
-  const [files, setFiles] = useState([]); // Array to store multiple files
+  const [files, setFiles] = useState([]);
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];

@@ -1,14 +1,20 @@
 import { Layout } from "./Lay";
 import { useFormik } from "formik";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router";
+import { healthProviderDetailFunApi } from "store/auth/services";
 import * as Yup from "yup";
 
 export const HealthProvider = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const validationSchema = Yup.object({
     providerName: Yup.string().required("Health Provider Name is required"),
     providerAddress: Yup.string().required(
       "Health Provider Address is required"
     ),
-    providerPhone:Yup.string().required("Provider Phone is required")
+    providerPhone: Yup.string().required("Provider Phone is required"),
   });
 
   const formik = useFormik({
@@ -19,6 +25,26 @@ export const HealthProvider = () => {
     },
     validationSchema,
     onSubmit: (values) => {
+      console.log("values", values);
+      const user = JSON.parse(localStorage.getItem("user"));
+      const email = user?.email;
+
+      const formData = {
+        userId: user.id,
+        providerName: values.providerName,
+        providerAddress: values.providerAddress,
+        providerPhone: values.providerPhone,
+      };
+
+      dispatch(
+        healthProviderDetailFunApi({
+          data: formData,
+          onSuccess: () => {
+            navigate(`/enter-otp?email=${encodeURIComponent(email)}`);
+          },
+        })
+      );
+
       console.log("Form submitted with values:", values);
     },
   });
@@ -27,7 +53,7 @@ export const HealthProvider = () => {
     <Layout>
       <div className="w-3/4">
         <h2 className="text-xl font-bold mb-4">Health Provider Details</h2>
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={formik.handleSubmit}>
           <div className="relative">
             <label className="absolute -top-2.5 left-3 bg-white px-1 text-sm text-gray-500">
               Provider Name
@@ -91,27 +117,24 @@ export const HealthProvider = () => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             />
-            {formik.touched.providerPhone &&
-              formik.errors.providerPhone && (
-                <p className="text-red-500 text-sm mt-1">
-                  {formik.errors.providerPhone}
-                </p>
-              )}
+            {formik.touched.providerPhone && formik.errors.providerPhone && (
+              <p className="text-red-500 text-sm mt-1">
+                {formik.errors.providerPhone}
+              </p>
+            )}
           </div>
-
 
           <button
             type="submit"
-            className="w-full bg-black text-white py-3 rounded-md"
+            className="w-full bg-black text-white py-3 mb-2 rounded-md"
           >
             Submit
           </button>
+        </form>
 
-          <button type="submit" className="p-3 border rounded-md w-full py-3 rounded-md">
+        <button className="p-3 mt-4 border rounded-md w-full py-3 rounded-md">
           Cancel
         </button>
-          
-        </form>
       </div>
     </Layout>
   );
