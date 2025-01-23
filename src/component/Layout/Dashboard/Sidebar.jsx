@@ -26,7 +26,7 @@ const sidebarList = [
   {
     name: "Summaries",
     icon: <MdEditDocument />,
-    link: "/",
+    link: "/document-summeries",
   },
   {
     name: "User Profile",
@@ -41,17 +41,17 @@ const sidebarList = [
   {
     name: "Settings",
     icon: <IoSettingsSharp />,
-    link: "/",
+    link: "/setting",
   },
   {
     name: "Logout",
     icon: <TbLogout />,
-    link: "/",
+    link: "/logout",
   },
   {
     name: "Help Center",
     icon: <IoIosHelpCircle />,
-    link: "/",
+    link: "/help-center",
   },
 ];
 

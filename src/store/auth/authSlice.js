@@ -2,19 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 import {
   checkTokenIsValidFunApi,
   healthProviderDetailFunApi,
-  // forgetPasswordFunApi,
   loginFunApi,
   registerFunApi,
   verifyOtpFunApi,
-  // logoutFunApi,
-  // resetPasswordFunApi,
-  // changePasswordFunApi,
-  // verifyOtpFunApi,
-  // updateProfileFunApi,
-  // checkTokenIsValidFunApi,
-  // autoLoginFunApi,
-  // updateUserFunApi,
-  // dashboardAutoLoginFunApi
 } from "./services";
 
 

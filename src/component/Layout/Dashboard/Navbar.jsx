@@ -3,10 +3,7 @@ import { useSelector } from "react-redux";
 
 export const DashboardNavbar = () => {
   // Fetch user data from Redux store
-  const { firstName, lastName, email } = useSelector((state) => state.auth.user );
-  console.log("first name ", firstName)
-
-  console.log("last name ", lastName)
+  const { firstName, lastName, email } = useSelector((state) => state.auth.user ) || {};
 
   return (
     <nav className="h-[96px] bg-[#3A8EF6] flex items-center justify-between px-6">
