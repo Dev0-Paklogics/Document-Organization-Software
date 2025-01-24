@@ -13,6 +13,7 @@ import { ForgetPassword } from "component/Layout/AuthLayout/Auth/forgetPassword"
 import { PasswordSuccess } from "component/Layout/AuthLayout/Auth/passwordSucess";
 import { ResetPassword } from "component/Layout/AuthLayout/Auth/resetPassword";
 import { OtpForm } from "component/Layout/AuthLayout/Auth/Otp";
+import { Summaries } from "pages/Dashboard/Summeries";
 
 export default function App() {
   return (
@@ -37,6 +38,7 @@ export default function App() {
           <Route path="document-overview" element={<DocumentOverview />} />
           <Route path="document-managment" element={<DocumentManagement />} />
           <Route path="profile-update" element={<ProfileUpdate/>}/>
+          <Route path="document-summeries" element={<Summaries/>}/>
 
         </Route>
       </Routes>

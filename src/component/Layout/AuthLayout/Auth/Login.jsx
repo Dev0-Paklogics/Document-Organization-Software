@@ -32,7 +32,7 @@ export const Login = () => {
         loginFunApi({
           data: values,
           onSuccess: () => {
-            navigate("/");
+            navigate("/")
           },
         }) 
       );

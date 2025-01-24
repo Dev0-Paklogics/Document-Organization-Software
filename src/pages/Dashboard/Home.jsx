@@ -6,8 +6,10 @@ import { UploadDocumentApi } from "store/document/services";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import ButtonWithLoading from "component/LoadingButton";
+import { useNavigate } from "react-router";
 
 export const DashboardHomePage = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [files, setFiles] = useState([]);
 
@@ -28,14 +30,17 @@ export const DashboardHomePage = () => {
     },
     validationSchema,
     onSubmit: (values) => {
-      const userId = localStorage.getItem("userId");
+      const user = JSON.parse(localStorage.getItem("user"));
+      console.log("user" , user)
 
       const formData = new FormData();
       files.forEach((file) => {
         formData.append(`file`, file);
       });
-      formData.append("id", userId);
+      formData.append("id", user?.id);
       formData.append("folderName", values.folderName);
+
+      console.log("user" , user.id)
 
       dispatch(
         UploadDocumentApi({
@@ -43,7 +48,7 @@ export const DashboardHomePage = () => {
           onSuccess: () => {
             setFiles([]);
             setShowModal(false)
-            // navigate("/");
+            navigate("/document-managment");
           },
         })
       );

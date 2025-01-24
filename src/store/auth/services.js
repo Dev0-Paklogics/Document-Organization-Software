@@ -1,21 +1,12 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "helper/api";
 import {
-  // forgotPasswordApi,
   loginApi,
   registerApi,
   healthProviderApi,
   verifyOtpApi,
   checkTokenIsValidApi,
-  // logoutApi,
-  // resetPasswordApi,
-  // verifyOtpApi,
-  // changePasswordApi,
-  // updateprofileApi,
-  // checkTokenIsValidApi,
-  // updateUserApi,
-  // autoLoginApi,
-  // dashboardAutoLoginApi,
+  autoLoginApi,
 } from "./constrants";
 import toast from "react-hot-toast";
 // import axiosImage from "helper/api-image"
@@ -28,15 +19,13 @@ export const loginFunApi = createAsyncThunk(
       console.log("response in loginFun => ", response.data);
       if (response.data.status === "success") {
 
-        // localStorage.removeItem('selectedBusinessId')
-
         const responseData = response.data.data;
+        localStorage.setItem("token", responseData.token);
+        localStorage.setItem("user", JSON.stringify(responseData.user));
 
-         localStorage.setItem("token", responseData.token)
           if (onSuccess) {
             onSuccess(responseData.user.email);
-            toast.success("Login Successfull");
-
+            toast.success(response.data.message);
           }
           return;
 
@@ -220,6 +209,43 @@ export const checkTokenIsValidFunApi = createAsyncThunk(
       if (response.data.status === "success") {
 
         // localStorage.removeItem('selectedBusinessId')
+        return response.data.data;
+      } else {
+        console.log(
+          "Error response in checkTokenIsValidFun Api => ",
+          response.data
+        );
+        const err =
+          response?.data?.message ||
+          response?.message ||
+          "Something went wrong!";
+        throw new Error(err);
+      }
+    } catch (error) {
+      console.log("Error in checkTokenIsValidFun Api ", error);
+      let err =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Something went wrong!";
+      if (err === "Network Error") {
+        err = "Please check your internet connection";
+      }
+
+      throw error;
+    }
+  }
+);
+
+export const autoLoginFunApi = createAsyncThunk(
+  "auth/autoLogin",
+  async ({ onSuccess }) => {
+    try {
+      const response = await axios.get(checkTokenIsValidApi);
+      console.log("response in checkTokenIsValidFun => ", response.data);
+      if (response.data.status === "success") {
+        if (onSuccess) {
+          onSuccess();
+        }
         return response.data.data;
       } else {
         console.log(

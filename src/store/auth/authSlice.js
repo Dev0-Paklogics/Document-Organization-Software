@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
+  autoLoginFunApi,
   checkTokenIsValidFunApi,
   healthProviderDetailFunApi,
   loginFunApi,
@@ -51,6 +52,7 @@ const authSlice = createSlice({
         state.token = action.payload?.token;
         state.role = action.payload?.user.role;
         state.isVerified = action.payload?.user.verified;
+        console.log("token", action.payload)
       })
       .addCase(loginFunApi.rejected, (state) => {
         state.isLoading = false;
@@ -164,6 +166,19 @@ const authSlice = createSlice({
         state.token = null;
         state.otpVerified = false;
       });
+      builder.addCase(autoLoginFunApi.fulfilled, (state, action) => {
+        localStorage.setItem("token", action.payload.token);
+        state.validToken.isLoading = false;
+        state.validToken.valid = true;
+        state.validToken.dataFetched = true;
+        state.isAuthenticated = true;
+        state.user = action.payload.user;
+        state.isVerified = action.payload.user.verified;
+        state.token = action.payload.token;
+        state.role = action.payload.user.role;
+        state.otpVerified = localStorage.getItem("otpVerified")?.toString() === "true";
+      });
+
   },
 });
 

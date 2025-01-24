@@ -14,6 +14,7 @@ export const DashboardLayout = () => {
   const { isAuthenticated, role, otpVerified, validToken } = useSelector(
     (state) => state.auth
   );
+  console.log("isAuth 17", isAuthenticated)
 
   useEffect(() => {
     const fetchData = async () => {
