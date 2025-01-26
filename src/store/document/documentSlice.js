@@ -1,7 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 import {
     UploadDocumentApi,
-    getallDocsFunApi
+    getallDocsFunApi,
+    deleteDocsFunApi
 } from "./services";
 
 const documentSlice = createSlice({
@@ -59,6 +60,36 @@ const documentSlice = createSlice({
         state.documentAll.data = null;
         state.documentAll.error = action.payload;
         state.documentAll.dataFatched = true;
+      });
+      builder
+      .addCase(deleteDocsFunApi.pending, (state) => {
+        state.documentAll.isLoading = true;
+        state.documentAll.error = null;
+      })
+      .addCase(deleteDocsFunApi.fulfilled, (state, action) => {
+        console.log("action in delete docs", action.payload);
+      
+        // Parse the stringified docsId
+        const parsedDocsId = JSON.parse(action.payload.docsId).docsId;
+        console.log("parsedDo", parsedDocsId);
+      
+        // Debug current state data
+        console.log("Current data before filtering:", state.documentAll.data);
+      
+        // Update the state immutably
+        state.documentAll.isLoading = false;
+        state.documentAll.data = state.documentAll.data.filter((doc) => {
+          console.log("Comparing IDs:", doc.docsId, parsedDocsId);
+          return doc.docsId !== parsedDocsId;
+        });
+      
+        // Debug updated state data
+        console.log("Data after filtering:", state.documentAll.data);
+      })
+      
+      .addCase(deleteDocsFunApi.rejected, (state, action) => {
+        state.documentAll.isLoading = false;
+        state.error = action.payload;
       });
   },
 });

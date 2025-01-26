@@ -1,8 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "helper/api";
-import { documentUpload, getalldocs } from "./contraints";
+import { deleteDocsApi, documentUpload, getalldocs } from "./contraints";
 import toast from "react-hot-toast";
-import axiosImage from "helper/api-image"
+import axiosImage from "helper/api-image";
 
 export const UploadDocumentApi = createAsyncThunk(
   "document/upload",
@@ -54,10 +54,7 @@ export const getallDocsFunApi = createAsyncThunk(
         }
         return response.data.data;
       } else {
-        console.log(
-          "Error response all docs Api => ",
-          response.data.data
-        );
+        console.log("Error response all docs Api => ", response.data.data);
         const err =
           response?.data?.message ||
           response?.message ||
@@ -70,6 +67,45 @@ export const getallDocsFunApi = createAsyncThunk(
       }
     } catch (error) {
       console.log("Error in all Docs", error);
+      let err =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Something went wrong!";
+      if (err === "Network Error") {
+        err = "Please check your internet connection";
+      }
+      if (err !== "Docs not found") {
+        toast.error(err);
+      }
+
+      throw new Error(err);
+    }
+  }
+);
+
+export const deleteDocsFunApi = createAsyncThunk(
+  "docs/delete",
+  async ({ onSuccess, data }) => {
+    console.log("data dipatching", data);
+    try {
+      const response = await axios.post(deleteDocsApi, data);
+      console.log("response in delete docs api => ", response.data);
+      if (response.data.message === "Document deleted successfully") {
+        if (onSuccess) {
+          onSuccess();
+          toast.success(response.data.message);
+        }
+        return { ...response.data, docsId: data }; // Include docsId manually
+      } else {
+        const err = response?.data?.message || "Something went wrong!";
+        console.log("Error response delete docs api => ", response.data);
+        if (err !== "Docs not found") {
+          toast.error(err);
+        }
+        throw new Error(err);
+      }
+    } catch (error) {
+      console.log("Error in delete docs api", error);
       let err =
         error?.response?.data?.message ||
         error?.message ||
