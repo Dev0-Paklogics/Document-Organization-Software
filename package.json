@@ -46,6 +46,5 @@
   },
   "devDependencies": {
     "tailwindcss": "^3.4.17"
-  },
-  "proxy": "https://62d7-173-208-156-111.ngrok-free.app"
+  }
 }

@@ -1,70 +1,47 @@
-import axiosNgrok from "helper/api-ngrok";
+import ButtonWithLoading from "component/LoadingButton";
 import React, { useState } from "react";
 import { AiFillDelete } from "react-icons/ai";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { AlDocsSummaryApi } from "store/summary/services";
 // import { AlDocsSummaryApi } from "store/summary/services";
 
 export const Summaries = () => {
   const [showSpeechSection, setShowSpeechSection] = useState(false);
-  const [files, setFiles] = useState([]);
-  console.log("files", files)
-  const [responseData, setResponseData] = useState(null);
-  console.log("responseDta", responseData)
+  const [file, setFile] = useState(null);
+  const [summary, setSummary] = useState();
+  console.log("summary", summary?.data?.health_summary);
+  const { isLoading  } = useSelector((state) => state.summary.summary);
+  console.log("isloading 14",isLoading)
 
+  const dispatch = useDispatch();
   // const dispatch = useDispatch();
 
   const handleFileChange = (event) => {
-    const selectedFiles = Array.from(event.target.files);
-    setFiles((prevFiles) => [...prevFiles, ...selectedFiles]);
+    const selectedFile = event.target.files[0];
+    setFile(selectedFile);
   };
 
-  const handleDelete = (index) => {
-    setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
-  };
-
-  // const handleUpload = (event) => {
-
-  //   const formData = new FormData();
-  //   files.forEach((file) => {
-  //     formData.append(`file`, file);
-  //   });
-
-  //   dispatch(
-  //     AlDocsSummaryApi({
-  //       data: formData,
-  //       onSuccess: () => {
-  //         setFiles([]);
-  //       },
-  //       onError: (error) => {
-  //         console.error("Upload failed", error);
-  //       },
-  //     })
-  //   );
-  // };
-
-  const handleUpload = async () => {
-    if (files.length === 0) {
-      alert("Please select a PDF file.");
+  const handleUpload = () => {
+    if (!file) {
+      alert("Please select a file before uploading.");
       return;
     }
-  
-    const pdfFile = files.find((file) => file.type === "application/pdf");
-    if (!pdfFile) {
-      alert("Please select a valid PDF file.");
-      return;
-    }
-  
+
     const formData = new FormData();
-    formData.append("file_path", pdfFile);
-  
-    try {
-      const response = await axiosNgrok.post("/analyze/", formData); // Content-Type is set automatically
-      setResponseData(response.data); // Save the response data to state
-    } catch (error) {
-      console.error("Failed to upload the file:", error);
-      alert("There was an error. Please try again.");
-    }
-  };  
+    formData.append("file", file);
+
+    dispatch(
+      AlDocsSummaryApi({
+        data: formData,
+        onSuccess: (data) => {
+          setSummary(data);
+        },
+        onError: (error) => {
+          console.error("Upload failed", error);
+        },
+      })
+    );
+  };
 
   const reports = [
     { name: "Medical lab report", time: "3m ago", type: "folder" },
@@ -129,56 +106,48 @@ export const Summaries = () => {
               <p className="text-xs text-gray-400">
                 JPG, PNG, or PDF (max 10MB)
               </p> */}
-           {files.length === 0 ? (
-             <p className="text-gray-500 text-center">No files uploaded yet.</p>
-           ) : (
-             files.map((file, index) => (
-               <div
-                 key={index}
-                 className="flex items-center justify-between border border-blue-400 rounded-md p-3 mb-3"
-               >
-                 <span className="text-gray-900">{file.name}</span>
-   
-                 <button
-                   onClick={() => handleDelete(index)}
-                   className="text-red-500 hover:text-red-700"
-                 >
-                   <AiFillDelete size={20} />
-                 </button>
-               </div>
-             ))
-           )}
+              {!file ? (
+                <p className="text-gray-500 text-center">
+                  No files uploaded yet.
+                </p>
+              ) : (
+                <div className="flex items-center justify-between border border-blue-400 rounded-md p-3 mb-3">
+                  <span className="text-gray-900">{file.name}</span>
 
-              {/* <input type="file" className="mx-auto bg-blue-500 text-white rounded-lg px-4 py-2 mt-4">
+                  <button className="text-red-500 hover:text-red-700">
+                    <AiFillDelete size={20} />
+                  </button>
+
+                </div>
+              )}
+
+            {/* <input type="file" className="mx-auto bg-blue-500 text-white rounded-lg px-4 py-2 mt-4">
                 Select File
               </input> */}
               <label className="mt-4 bg-blue-500 text-white px-4 py-2 rounded cursor-pointer">
                 Select File
                 <input
                   type="file"
-                  multiple
                   className="hidden"
                   onChange={handleFileChange}
                 />
               </label>
             </div>
-
             <div className="flex gap-4 mt-4">
-              <button
+              <ButtonWithLoading
                 onClick={handleUpload}
+                isLoading={isLoading}
                 className="bg-blue-500 text-white rounded-lg px-4 py-2"
               >
                 Generate
-              </button>
+              </ButtonWithLoading>
             </div>
           </div>
 
           <div className="bg-white shadow-md rounded-lg p-6 w-full md:w-1/2">
             <h2 className="text-lg font-semibold text-gray-700">Summary</h2>
             <div className="overflow-y-auto h-72 border border-gray-300 rounded-lg p-4 mt-4">
-              <p className="text-sm text-gray-600">
-                Your generated summary will appear here.
-              </p>
+              <p className="text-sm text-gray-600">{summary} </p>
             </div>
           </div>
         </div>

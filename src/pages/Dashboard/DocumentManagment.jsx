@@ -38,10 +38,6 @@ export const DocumentManagement = () => {
     }));
   };
 
-  const handleDeleteFolder = () => {
-  
-  };
-
   const handleDeleteDocument = (docsId) => {
     console.log("docsId", docsId)
     dispatch(
@@ -89,14 +85,14 @@ export const DocumentManagement = () => {
                 ) : (
                   <FaChevronDown className="text-gray-500" />
                 )}
-                <FaTrash
+                {/* <FaTrash
                   className="text-red-500 cursor-pointer hover:text-red-700"
                   title="Delete Folder"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleDeleteFolder(category);
                   }}
-                />
+                /> */}
               </div>
             </div>
 

@@ -1,17 +1,19 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AlDocsSummary } from "./contraints";
 import toast from "react-hot-toast";
-import axiosNgrok from "helper/api-ngrok";
+import axiosImage from "helper/api-image";
+
 
 export const AlDocsSummaryApi = createAsyncThunk(
   "documentsummary/upload/",
   async ({ data, onSuccess }) => {
     try {
-      const response = await axiosNgrok.post(AlDocsSummary, data);
-      console.log("response in Al document upload Fun Api => ", response.data);
+      const response = await axiosImage.post(AlDocsSummary, data);
+      console.log("Response Structure:", JSON.stringify(response.data.data, null, 2));
       if (response.data.status === "success") {
+
         if (onSuccess) {
-          onSuccess();
+          onSuccess(response.data.data.health_summary);
           toast.success("Document Uploaded Successfully");
         }
         return;
@@ -20,7 +22,7 @@ export const AlDocsSummaryApi = createAsyncThunk(
         const err =
           response?.data?.message ||
           response?.message ||
-          "Something went wrong!";
+          "Something went wrong!";  
         console.log("err: ", err);
         toast.error(err);
         throw new Error(err);
