@@ -5,7 +5,7 @@ import { RxDashboard } from "react-icons/rx";
 import { IoIosDocument } from "react-icons/io";
 import { MdSummarize } from "react-icons/md";
 import { MdEditDocument } from "react-icons/md";
-import { FaUser } from "react-icons/fa";
+import { FaCommentDots, FaUser } from "react-icons/fa";
 import { HiDocumentSearch } from "react-icons/hi";
 import { IoSettingsSharp } from "react-icons/io5";
 import { TbLogout } from "react-icons/tb";
@@ -52,6 +52,11 @@ const sidebarList = [
     name: "Help Center",
     icon: <IoIosHelpCircle />,
     link: "/help-center",
+  },
+  {
+    name: "Ask Questions to AI",
+    icon: <FaCommentDots />,
+    link: "/chat",
   },
 ];
 

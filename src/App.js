@@ -14,6 +14,7 @@ import { PasswordSuccess } from "component/Layout/AuthLayout/Auth/passwordSucess
 import { ResetPassword } from "component/Layout/AuthLayout/Auth/resetPassword";
 import { OtpForm } from "component/Layout/AuthLayout/Auth/Otp";
 import { Summaries } from "pages/Dashboard/Summeries";
+import ChatWithAi from "./pages/Dashboard/ChatWithAi";
 
 export default function App() {
   return (
@@ -39,6 +40,7 @@ export default function App() {
           <Route path="document-managment" element={<DocumentManagement />} />
           <Route path="profile-update" element={<ProfileUpdate/>}/>
           <Route path="document-summeries" element={<Summaries/>}/>
+          <Route path="chat" element={<ChatWithAi/>}/>
 
         </Route>
       </Routes>

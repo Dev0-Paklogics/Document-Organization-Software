@@ -1,20 +1,23 @@
 import ButtonWithLoading from "component/LoadingButton";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { AiFillDelete } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { AlDocsSummaryApi } from "store/summary/services";
+import AudioWaveform from 'component/Layout/Dashboard/AudioWaveform';
+import AudioRecorder from 'component/Layout/Dashboard/AudioRecorder';
 // import { AlDocsSummaryApi } from "store/summary/services";
 
 export const Summaries = () => {
   const [showSpeechSection, setShowSpeechSection] = useState(false);
   const [file, setFile] = useState(null);
+  const [audioFile, setAudioFile] = useState(null);
   const [summary, setSummary] = useState();
-  console.log("summary", summary?.data?.health_summary);
+  const [audioUrl, setAudioUrl] = useState(null);
+  const [isRecording, setIsRecording] = useState(false);
   const { isLoading  } = useSelector((state) => state.summary.summary);
-  console.log("isloading 14",isLoading)
 
   const dispatch = useDispatch();
-  // const dispatch = useDispatch();
+  const audioRecorderRef = useRef(null);
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
@@ -22,18 +25,24 @@ export const Summaries = () => {
   };
 
   const handleUpload = () => {
-    if (!file) {
+    if (!file&&!audioFile) {
       alert("Please select a file before uploading.");
       return;
     }
-
     const formData = new FormData();
-    formData.append("file", file);
-
+    if(file){
+      formData.append("file", file);
+    }
+    if(audioFile){
+      formData.append("file", audioFile);
+    }
     dispatch(
       AlDocsSummaryApi({
         data: formData,
+        isFile: file?true:false,
         onSuccess: (data) => {
+          console.log(data,"dadatadatata");
+          
           setSummary(data);
         },
         onError: (error) => {
@@ -41,6 +50,69 @@ export const Summaries = () => {
         },
       })
     );
+  };
+
+  const handleRecording = async () => {
+    if (isRecording) {
+      audioRecorderRef.current?.stopRecording();
+      setIsRecording(false);
+    } else {
+      setAudioUrl(null);
+      
+      const started = await audioRecorderRef.current?.startRecording();
+      if (started) {
+        setIsRecording(true);
+      }
+    }
+  };
+
+  const handleRecordingComplete = async (url) => {
+    setAudioUrl(url);
+    setIsRecording(false);
+    
+    const medicalPrefixes = [
+      'patient-audio',
+      'medical-record',
+      'health-note',
+      'clinical-audio',
+      'diagnosis-record',
+      'consultation',
+      'medical-note',
+      'health-record'
+    ];
+    
+    // Generate random filename with medical prefix
+    const randomPrefix = medicalPrefixes[Math.floor(Math.random() * medicalPrefixes.length)];
+    const timestamp = new Date().getTime();
+    const filename = `${randomPrefix}-${timestamp}.wav`;
+    
+    // Convert the URL to a File object with the medical-themed filename
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const audioFile = new File([blob], filename, { type: 'audio/wav' });
+      setAudioFile(audioFile);
+    } catch (error) {
+      console.error('Error converting recording to file:', error);
+    }
+  };
+
+  const handleAudioUpload = (event) => {
+    const file = event.target.files[0];
+    if (file && file.type.startsWith('audio/')) {
+      if (isRecording) {
+        audioRecorderRef.current?.stopRecording();
+        setIsRecording(false);
+      }
+      setAudioUrl(null);
+      setAudioFile(file);
+      const url = URL.createObjectURL(file);
+      setAudioUrl(url);
+      setAudioFile(file);
+
+    } else {
+      alert('Please upload a valid audio file');
+    }
   };
 
   const reports = [
@@ -67,12 +139,85 @@ export const Summaries = () => {
     }
   };
 
+  const handleDelete = () => {
+    setFile(null);
+    setAudioFile(null);
+    setAudioUrl(null);
+  };
+
+  const renderSpeechSection = () => (
+    <div className="flex flex-col items-center bg-gray-100 py-10">
+      <div className="w-11/12 md:w-3/4 bg-white shadow-lg rounded-lg p-6">
+        <div className="flex justify-end gap-4 mb-6">
+          <button
+            onClick={handleRecording}
+            className={`font-medium px-6 py-2 rounded-md ${
+              isRecording 
+                ? 'bg-red-500 hover:bg-red-600' 
+                : 'bg-blue-500 hover:bg-blue-600'
+            } text-white`}
+          >
+            {isRecording ? 'Stop Recording' : 'Record Speech'}
+          </button>
+          <label className={`bg-blue-500 text-white font-medium px-6 py-2 rounded-md hover:bg-blue-600 cursor-pointer`}>
+            Upload Speech
+            <input
+              type="file"
+              accept="audio/*"
+              className="hidden"
+              onChange={handleAudioUpload}
+            />
+          </label>
+        </div>
+
+        <AudioRecorder ref={audioRecorderRef} onRecordingComplete={handleRecordingComplete} />
+
+        {audioUrl && (
+          <div className="bg-white shadow-md p-6 rounded-lg w-full max-w-4xl">
+            <div className="relative">
+              <AudioWaveform 
+                audioUrl={audioUrl} 
+              />
+            </div>
+          </div>
+        )}
+
+        <div className="w-full border border-blue-500 rounded-lg bg-blue-50 p-4 mt-6">
+          <p className="text-gray-600 mb-2">
+            {summary}
+          </p>
+        </div>
+        <div className="flex justify-end gap-4 mt-4">
+          <button className="bg-gray-200 text-gray-600 px-6 py-2 rounded-md hover:bg-gray-300">
+            Save
+          </button>
+          {/* <button className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600">
+            Generate Summary
+          </button> */}
+          <ButtonWithLoading
+                onClick={handleUpload}
+                isLoading={isLoading}
+                className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600"
+              >
+                Generate Summary
+              </ButtonWithLoading>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="bg-gray-50 min-h-screen p-6">
-      {/* File Upload Section */}
       <div className="flex justify-center mt-6 mb-6">
         <button
-          onClick={() => setShowSpeechSection(!showSpeechSection)}
+          onClick={() => {
+            setSummary(null);
+            setFile(null);
+            setAudioFile(null);
+            setAudioUrl(null);
+            setIsRecording(false);
+            setShowSpeechSection(!showSpeechSection)
+          }}
           className="bg-blue-500 text-white font-medium px-6 py-2 rounded-md hover:bg-blue-600"
         >
           {showSpeechSection ? "Upload Document" : "Speech to Text"}
@@ -100,12 +245,6 @@ export const Summaries = () => {
                   d="M4 16v4m0 0h16m-16 0l16-16M16 12v8m0-8L8 4"
                 />
               </svg>
-              {/* <p className="text-sm mb-2">
-                Select a file or drag and drop here
-              </p>
-              <p className="text-xs text-gray-400">
-                JPG, PNG, or PDF (max 10MB)
-              </p> */}
               {!file ? (
                 <p className="text-gray-500 text-center">
                   No files uploaded yet.
@@ -114,16 +253,13 @@ export const Summaries = () => {
                 <div className="flex items-center justify-between border border-blue-400 rounded-md p-3 mb-3">
                   <span className="text-gray-900">{file.name}</span>
 
-                  <button className="text-red-500 hover:text-red-700">
+                  <button className="text-red-500 hover:text-red-700" onClick={handleDelete}>
                     <AiFillDelete size={20} />
                   </button>
 
                 </div>
               )}
 
-            {/* <input type="file" className="mx-auto bg-blue-500 text-white rounded-lg px-4 py-2 mt-4">
-                Select File
-              </input> */}
               <label className="mt-4 bg-blue-500 text-white px-4 py-2 rounded cursor-pointer">
                 Select File
                 <input
@@ -151,66 +287,7 @@ export const Summaries = () => {
             </div>
           </div>
         </div>
-      ) : (
-        <div className="flex flex-col items-center bg-gray-100 py-10">
-          <div className="w-11/12 md:w-3/4 bg-white shadow-lg rounded-lg p-6">
-            <div className="flex justify-end gap-4 mb-6">
-              <button className="bg-red-500 text-white font-medium px-6 py-2 rounded-md hover:bg-red-600">
-                Record Speech
-              </button>
-              <button className="bg-blue-500 text-white font-medium px-6 py-2 rounded-md hover:bg-blue-600">
-                Upload Speech
-              </button>
-            </div>
-            {/* Waveform Visualization */}
-            <div className="bg-white shadow-md p-6 rounded-lg w-full max-w-4xl">
-              <div className="relative">
-                <div className="flex justify-between text-gray-500 text-sm mb-2">
-                  <span>00:45</span>
-                  <span className="text-xl font-medium text-gray-700">
-                    00:<span className="text-blue-500">06.10</span>
-                  </span>
-                  <span>05:00</span>
-                </div>
-                <div className="relative bg-gray-200 h-16 rounded-md overflow-hidden">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full flex space-x-1 px-2">
-                      {[...Array(100)].map((_, i) => (
-                        <div
-                          key={i}
-                          className={`bg-blue-500 ${
-                            i % 2 === 0 ? "h-10" : "h-6"
-                          } rounded-sm`}
-                          style={{ width: "1px" }}
-                        ></div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="absolute h-16 w-0.5 bg-red-500 left-1/2 transform -translate-x-1/2"></div>
-                </div>
-              </div>
-            </div>
-
-            {/* Summary Section */}
-            <div className="w-full border border-blue-500 rounded-lg bg-blue-50 p-4 mt-6">
-              <p className="text-gray-600 mb-2">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              </p>
-              <p className="text-gray-600 mb-2">
-                Nunc vulputate libero et velit interdum, ac aliquet odio mattis.
-              </p>
-            </div>
-            <div className="flex justify-end gap-4 mt-4">
-              <button className="bg-gray-200 text-gray-600 px-6 py-2 rounded-md hover:bg-gray-300">
-                Save
-              </button>
-              <button className="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600">
-                Generate Summary
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      ) : renderSpeechSection()}
 
       <div className="mt-8 max-w-4xl mx-auto bg-white shadow-md rounded-md overflow-hidden">
         <ul className="divide-y divide-gray-200">

@@ -1,19 +1,23 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { AlDocsSummary } from "./contraints";
+import { AlDocsSummary, AlDocsSummaryAudio } from "./contraints";
 import toast from "react-hot-toast";
 import axiosImage from "helper/api-image";
 
 
 export const AlDocsSummaryApi = createAsyncThunk(
   "documentsummary/upload/",
-  async ({ data, onSuccess }) => {
+  async ({ data, onSuccess, isFile }) => {
     try {
-      const response = await axiosImage.post(AlDocsSummary, data);
+      const response = await axiosImage.post(isFile?AlDocsSummaryAudio:AlDocsSummary, data);
       console.log("Response Structure:", JSON.stringify(response.data.data, null, 2));
       if (response.data.status === "success") {
 
         if (onSuccess) {
-          onSuccess(response.data.data.health_summary);
+          if (response.data.data.health_summary) {
+            onSuccess(response.data.data.health_summary);
+          }else{
+            onSuccess(response.data.data.message);
+          }
           toast.success("Document Uploaded Successfully");
         }
         return;
