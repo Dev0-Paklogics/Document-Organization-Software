@@ -78,10 +78,10 @@ const documentSlice = createSlice({
       
         // Update the state immutably
         state.documentAll.isLoading = false;
-        state.documentAll.data = state.documentAll.data.filter((doc) => {
-          console.log("Comparing IDs:", doc.docsId, parsedDocsId);
-          return doc.docsId !== parsedDocsId;
-        });
+        // state.documentAll.data = state.documentAll.data.filter((doc) => {
+        //   console.log("Comparing IDs:", doc.docsId, parsedDocsId);
+        //   return doc.docsId !== parsedDocsId;
+        // });
       
         // Debug updated state data
         console.log("Data after filtering:", state.documentAll.data);

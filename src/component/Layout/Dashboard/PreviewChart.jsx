@@ -6,7 +6,7 @@ const PreviewChart = ({ message, setMessage, handleSubmit, isLoading }) => {
 
   return (
     <div className="flex flex-col items-center mt-40">
-      <h1 className="text-[48px] font-bold mb-4 text-gray-800 leading-[70px]">What can I help with?</h1>
+      <h1 className="text-[32px] lg:text-[48px] font-bold mb-4 text-gray-800 leading-[70px] ">What can I help with?</h1>
       <div className="w-full">
         <form onSubmit={handleSubmit} className="relative">
           <input

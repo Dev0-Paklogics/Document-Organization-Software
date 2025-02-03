@@ -7,6 +7,7 @@ import {
   verifyOtpApi,
   checkTokenIsValidApi,
   autoLoginApi,
+  logoutApi,
 } from "./constrants";
 import toast from "react-hot-toast";
 // import axiosImage from "helper/api-image"
@@ -269,6 +270,46 @@ export const autoLoginFunApi = createAsyncThunk(
       }
 
       throw error;
+    }
+  }
+);
+
+export const logoutFunApi = createAsyncThunk(
+  "auth/logout",
+  async ({ onSuccess }) => {
+    try {
+      const response = await axios.get(logoutApi);
+      console.log("response in logoutFunApi => ", response.data);
+      if (response.data.status === "success") {
+        // Clear local storage
+        localStorage.clear();
+        
+        if (onSuccess) {
+          onSuccess();
+        }
+        toast.success("Logged out successfully");
+        return;
+      } else {
+        console.log("Error response in logout Api => ", response.data);
+        const err =
+          response?.data?.message ||
+          response?.message ||
+          "Something went wrong!";
+        console.log("err: ", err);
+        toast.error(err);
+        throw new Error(err);
+      }
+    } catch (error) {
+      console.log("Error in logout Api ", error);
+      let err =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Something went wrong!";
+      if (err === "Network Error") {
+        err = "Please check your internet connection";
+      }
+      toast.error(err);
+      throw new Error(err);
     }
   }
 );

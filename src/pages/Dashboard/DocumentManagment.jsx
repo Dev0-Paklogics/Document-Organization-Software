@@ -11,13 +11,17 @@ export const DocumentManagement = () => {
   const { data: allDocs, isLoading } = useSelector((state) => state.document.documentAll);
   console.log("allDocs",allDocs)
 
-  useEffect(() => {
+  const fetchDocuments = () => {
     dispatch(
       getallDocsFunApi({
         onSuccess: () => {
         },
       })
     );
+  }
+
+  useEffect(() => {
+    fetchDocuments();
   }, [dispatch]);
 
   useEffect(() => {
@@ -40,15 +44,21 @@ export const DocumentManagement = () => {
 
   const handleDeleteDocument = (docsId) => {
     console.log("docsId", docsId)
+    setOpenFolders({})
+    setGroupedDocs({})
     dispatch(
       deleteDocsFunApi({
         data: JSON.stringify({ docsId }), 
         onSuccess: () => {
+          fetchDocuments();
           console.log("Document deleted successfully!");
         },
       })
     );
   };
+
+  console.log('files',groupedDocs);
+  
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
@@ -110,7 +120,7 @@ export const DocumentManagement = () => {
                     >
                       <FaFilePdf className="text-red-500 text-2xl" />
                       <span className="text-sm font-medium text-gray-700 truncate max-w-xs">
-                        {file.fileUrl.split("/").pop()}
+                        {file.fileUrl.split("/").pop().length > 30 ? file.fileUrl.split("/").pop().slice(0,30) : file.fileUrl.split("/").pop()}
                       </span>
                     </div>
                     <FaTrash

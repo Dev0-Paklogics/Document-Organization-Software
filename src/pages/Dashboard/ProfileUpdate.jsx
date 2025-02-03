@@ -6,10 +6,9 @@ import "react-phone-input-2/lib/style.css";
 
 export const ProfileUpdate = () => {
   const validationSchema = Yup.object({
-    firstName: Yup.string().required("first  Name is required"),
+    firstName: Yup.string().required("First Name is required"),
     lastName: Yup.string().required("Last Name is required"),
-    email: Yup.string().required("email is required"),
-
+    email: Yup.string().required("Email is required"),
     address: Yup.string().required("Address is required"),
     providerPhone: Yup.string().required("Provider Phone is required"),
   });
@@ -23,17 +22,16 @@ export const ProfileUpdate = () => {
     },
     validationSchema,
     onSubmit: (values) => {
-      console.log("values", values);
-
       console.log("Form submitted with values:", values);
     },
   });
+
   return (
-    <div className="container px-10 ">
+    <div className="container px-4 sm:px-6 lg:px-10">
       <h2 className="text-xl mb-4 mt-6">Personal Information</h2>
       <form className="space-y-4" onSubmit={formik.handleSubmit}>
-        <div className="flex space-x-4 w-full">
-          <div className="w-1/2">
+        <div className="flex flex-col lg:flex-row lg:space-x-4 space-y-4 lg:space-y-0">
+          <div className="w-full lg:w-1/2">
             <label className="bg-white px-1 text-sm">First Name</label>
             <input
               name="firstName"
@@ -54,7 +52,7 @@ export const ProfileUpdate = () => {
             )}
           </div>
 
-          <div className="w-1/2">
+          <div className="w-full lg:w-1/2">
             <label className="bg-white px-1 text-sm">Last Name</label>
             <input
               name="lastName"
@@ -76,7 +74,7 @@ export const ProfileUpdate = () => {
           </div>
         </div>
 
-        <div className="w-1/2">
+        <div className="w-full lg:w-1/2">
           <label className="bg-white px-1 text-sm">Phone Number</label>
           <PhoneInput
             international
@@ -109,8 +107,8 @@ export const ProfileUpdate = () => {
           )}
         </div>
 
-        <div className="flex space-x-4 w-full">
-          <div className="w-1/2">
+        <div className="flex flex-col lg:flex-row lg:space-x-4 space-y-4 lg:space-y-0">
+          <div className="w-full lg:w-1/2">
             <label className="bg-white px-1 text-sm">Email</label>
             <input
               name="email"
@@ -129,7 +127,7 @@ export const ProfileUpdate = () => {
             )}
           </div>
 
-          <div className="w-1/2">
+          <div className="w-full lg:w-1/2">
             <label className="bg-white px-1 text-sm">Full Address</label>
             <input
               name="address"
@@ -150,17 +148,23 @@ export const ProfileUpdate = () => {
             )}
           </div>
         </div>
-        <div className="absolute bottom-10 right-10 flex space-x-10 w-1/2 ">
-          <button className="w-full bg-red-500 text-white rounded-md">
+
+        <div className="fixed bottom-4 sm:bottom-10 right-4 sm:right-10 flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0 w-[calc(100%-2rem)] sm:w-auto">
+          <button 
+            type="button"
+            className="w-full sm:w-32 bg-red-500 text-white rounded-md py-3 hover:bg-red-600"
+          >
             Delete Account
           </button>
-
-          <button className=" border rounded-md w-full py-3 rounded-md">
+          <button 
+            type="button"
+            className="w-full sm:w-32 border rounded-md py-3 hover:bg-gray-50"
+          >
             Cancel
           </button>
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white rounded-md"
+            className="w-full sm:w-32 bg-blue-500 text-white rounded-md py-3 hover:bg-blue-600"
           >
             Save
           </button>
