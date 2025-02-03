@@ -8,6 +8,9 @@ import {
   checkTokenIsValidApi,
   autoLoginApi,
   logoutApi,
+  getAllUsersApi,
+  getUserDetailsApi,
+  updateUserDetailsApi,
 } from "./constrants";
 import toast from "react-hot-toast";
 // import axiosImage from "helper/api-image"
@@ -301,6 +304,117 @@ export const logoutFunApi = createAsyncThunk(
       }
     } catch (error) {
       console.log("Error in logout Api ", error);
+      let err =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Something went wrong!";
+      if (err === "Network Error") {
+        err = "Please check your internet connection";
+      }
+      toast.error(err);
+      throw new Error(err);
+    }
+  }
+);
+
+export const getAllUsersFunApi = createAsyncThunk(
+  "auth/getAllUsers",
+  async ({ onSuccess }) => {
+    try {
+      const response = await axios.get(getAllUsersApi);
+      console.log("response in getAllUsers => ", response.data);
+      if (response.data.status === "success") {
+        if (onSuccess) {
+          onSuccess(response.data.data.users);
+        }
+        return response.data.data.users;
+      } else {
+        console.log("Error response in getAllUsers Api => ", response.data);
+        const err =
+          response?.data?.message ||
+          response?.message ||
+          "Something went wrong!";
+        console.log("err: ", err);
+        toast.error(err);
+        throw new Error(err);
+      }
+    } catch (error) {
+      console.log("Error in getAllUsers Api ", error);
+      let err =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Something went wrong!";
+      if (err === "Network Error") {
+        err = "Please check your internet connection";
+      }
+      toast.error(err);
+      throw new Error(err);
+    }
+  }
+);
+
+export const getUserDetailsFunApi = createAsyncThunk(
+  "auth/getUserDetails",
+  async ({ data, onSuccess }) => {
+    console.log(data,"dataaa");
+    
+    try {
+      const response = await axios.post(getUserDetailsApi, data);
+      console.log("response in getUserDetails => ", response.data);
+      if (response.data.status === "success") {
+        if (onSuccess) {
+          onSuccess(response.data.data);
+        }
+        return response.data.data;
+      } else {
+        console.log("Error response in getUserDetails Api => ", response.data);
+        const err =
+          response?.data?.message ||
+          response?.message ||
+          "Something went wrong!";
+        console.log("err: ", err);
+        toast.error(err);
+        throw new Error(err);
+      }
+    } catch (error) {
+      console.log("Error in getUserDetails Api ", error);
+      let err =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Something went wrong!";
+      if (err === "Network Error") {
+        err = "Please check your internet connection";
+      }
+      toast.error(err);
+      throw new Error(err);
+    }
+  }
+);
+
+export const updateUserDetailsFunApi = createAsyncThunk(
+  "auth/updateUserDetails",
+  async ({ data, onSuccess }) => {
+    try {
+      const response = await axios.post(updateUserDetailsApi, data);
+      console.log("response in updateUserDetails => ", response.data);
+      if (response.data.status === "success") {
+        if (onSuccess) {
+          onSuccess(response.data.user);
+          toast.success(response.data.message);
+        }
+        return response.data.user;
+      } else {
+        console.log("Error response in updateUserDetails Api => ", response.data);
+        const err =
+          response?.data?.message ||
+          response?.message ||
+          "Something went wrong!";
+        console.log("err: ", err);
+        toast.error(err);
+        throw new Error(err);
+      }
+    } catch (error) {
+      console.log("Error in updateUserDetails Api ", error);
       let err =
         error?.response?.data?.message ||
         error?.message ||

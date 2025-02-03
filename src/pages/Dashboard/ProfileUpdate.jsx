@@ -1,14 +1,45 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import { useDispatch } from "react-redux";
+import { getUserDetailsFunApi, updateUserDetailsFunApi } from "store/auth/services";
 
 export const ProfileUpdate = () => {
+  const dispatch = useDispatch();
+  const [userData, setUserData] = useState(null);
+
+  const fetchUserDetails = (userId) => {
+    dispatch(
+      getUserDetailsFunApi({
+        data: { userId },
+        onSuccess: (userData) => {
+          setUserData(userData);
+          formik.setValues({
+            firstName: userData.firstName || "",
+            lastName: userData.lastName || "",
+            email: userData.email || "",
+            address: userData.healthProvider?.providerAddress || "",
+            providerPhone: userData.phone?.code+userData.phone?.number || "",
+            countryCode: userData.phone?.code || "",
+          });
+        },
+      })
+    );
+  };
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user?.id) {
+      fetchUserDetails(user.id);
+    }
+  }, []);
+
   const validationSchema = Yup.object({
     firstName: Yup.string().required("First Name is required"),
     lastName: Yup.string().required("Last Name is required"),
-    email: Yup.string().required("Email is required"),
+    email: Yup.string().email("Invalid email format").required("Email is required"),
     address: Yup.string().required("Address is required"),
     providerPhone: Yup.string().required("Provider Phone is required"),
   });
@@ -19,10 +50,38 @@ export const ProfileUpdate = () => {
       lastName: "",
       email: "",
       address: "",
+      providerPhone: "",
+      countryCode: "",
     },
     validationSchema,
     onSubmit: (values) => {
-      console.log("Form submitted with values:", values);
+      const user = JSON.parse(localStorage.getItem("user"));
+      if (!user?.id) return;
+
+      // Format the data according to the API requirements
+      const formattedData = {
+        userId: user.id,
+        firstName: values.firstName,
+        lastName: values.lastName,
+        email: values.email,
+        phone: {
+          code: values.countryCode,
+          number: values.providerPhone.replace(values.countryCode, "") // Remove country code from the number
+        },
+        // Preserve existing data
+        role: userData?.role,
+        active: userData?.active
+      };
+
+      dispatch(
+        updateUserDetailsFunApi({
+          data: formattedData,
+          onSuccess: (updatedUser) => {
+            // Refresh user details after update
+            fetchUserDetails(user.id);
+          },
+        })
+      );
     },
   });
 
@@ -79,7 +138,7 @@ export const ProfileUpdate = () => {
           <PhoneInput
             international
             country="us"
-            value={`${formik.values.countryCode} ${formik.values.providerPhone}`}
+            value={formik.values.providerPhone}
             onChange={(value, country) => {
               formik.setFieldValue("countryCode", country.dialCode);
               formik.setFieldValue("providerPhone", value);

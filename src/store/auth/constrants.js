@@ -5,3 +5,6 @@ export const verifyOtpApi ="/auth/verifyOtp"
 export const autoLoginApi = "auth/auto-login";
 export const checkTokenIsValidApi = "/auth/token-is-valid";
 export const logoutApi = "/auth/logout";
+export const getAllUsersApi = "/auth/get-all-users";
+export const getUserDetailsApi = "/auth/get-user-details";
+export const updateUserDetailsApi = "/auth/update-user-details";

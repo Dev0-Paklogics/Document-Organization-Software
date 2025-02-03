@@ -43,7 +43,6 @@ export const DocumentManagement = () => {
   };
 
   const handleDeleteDocument = (docsId) => {
-    console.log("docsId", docsId)
     setOpenFolders({})
     setGroupedDocs({})
     dispatch(
@@ -61,7 +60,7 @@ export const DocumentManagement = () => {
   
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
+    <div className="p-6 min-h-screen">
     <h2 className="text-2xl font-bold mb-6 text-gray-800">Document Management</h2>
     {isLoading ? (
       <div className="flex justify-center items-center h-64">
