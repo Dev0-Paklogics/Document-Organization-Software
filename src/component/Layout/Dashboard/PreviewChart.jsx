@@ -1,6 +1,5 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { FaArrowUpLong } from "react-icons/fa6";
-import { IoIosAttach } from "react-icons/io";
 
 const PreviewChart = ({ message, setMessage, handleSubmit, isLoading }) => {
 
@@ -18,8 +17,6 @@ const PreviewChart = ({ message, setMessage, handleSubmit, isLoading }) => {
             disabled={isLoading}
           />
           <div className='absolute right-3 top-1/2 transform -translate-y-1/2 flex gap-1 justify-center items-center'>
-
-          <IoIosAttach className='text-xl text-black cursor-pointer' />
           <button
             type="submit"
             className={`bg-blue-500 text-white p-2 rounded-lg ${

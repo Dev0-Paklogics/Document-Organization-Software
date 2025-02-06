@@ -8,13 +8,16 @@ import PreviewChart from "../../component/Layout/Dashboard/PreviewChart";
 const TypingAnimation = ({ text }) => {
   const [displayedText, setDisplayedText] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
+  const scrollToBottom = useRef(null);
 
   useEffect(() => {
     if (currentIndex < text.length) {
       const timeout = setTimeout(() => {
         setDisplayedText(prev => prev + text[currentIndex]);
         setCurrentIndex(prev => prev + 1);
-      }, 4); // Adjust speed here
+        // Scroll after each character is added
+        scrollToBottom.current?.();
+      }, 4);
 
       return () => clearTimeout(timeout);
     }
@@ -105,7 +108,12 @@ const ChatWithAi = () => {
                     }`}
                   >
                     <p className="font-normal text-sm sm:text-base leading-[22px] sm:leading-[25px]">
-                      {msg.type === 'ai' ? <TypingAnimation text={msg.content} /> : msg.content}
+                      {msg.type === 'ai' ? (
+                        <TypingAnimation 
+                          text={msg.content} 
+                          ref={(el) => el && (el.scrollToBottom = scrollToBottom)}
+                        />
+                      ) : msg.content}
                     </p>
                   </div>
                 </div>
@@ -142,12 +150,6 @@ const ChatWithAi = () => {
                   disabled={isLoading}
                 />
                 <div className="absolute right-2 sm:right-3 top-1/2 transform -translate-y-1/2 flex gap-1 sm:gap-2 items-center">
-                  <button
-                    type="button"
-                    className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                  >
-                    <IoIosAttach className="text-lg sm:text-xl text-black" />
-                  </button>
                   <button
                     type="submit"
                     className={`bg-blue-500 text-white p-1.5 sm:p-2 rounded-lg ${
