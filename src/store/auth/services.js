@@ -7,6 +7,10 @@ import {
   verifyOtpApi,
   checkTokenIsValidApi,
   autoLoginApi,
+  logoutApi,
+  getAllUsersApi,
+  getUserDetailsApi,
+  updateUserDetailsApi,
 } from "./constrants";
 import toast from "react-hot-toast";
 // import axiosImage from "helper/api-image"
@@ -18,17 +22,15 @@ export const loginFunApi = createAsyncThunk(
       const response = await axios.post(loginApi, data);
       console.log("response in loginFun => ", response.data);
       if (response.data.status === "success") {
-
         const responseData = response.data.data;
         localStorage.setItem("token", responseData.token);
         localStorage.setItem("user", JSON.stringify(responseData.user));
 
-          if (onSuccess) {
-            onSuccess(responseData.user.email);
-            toast.success(response.data.message);
-          }
-          return;
-
+        if (onSuccess) {
+          onSuccess(responseData.user.email);
+          toast.success(response.data.message);
+        }
+        return;
       } else {
         console.log("Error response in login Api => ", response.data);
         const err =
@@ -61,17 +63,14 @@ export const registerFunApi = createAsyncThunk(
       const response = await axios.post(registerApi, data);
       console.log("response in registerFunApi => ", response.data);
       if (response.data.status === "success") {
+        const responseData = response.data.data;
 
-        const responseData = response.data.data;  
- 
-          if (onSuccess) {
+        if (onSuccess) {
+          onSuccess(responseData.user);
+        }
+        toast.success(response.data.message);
 
-            onSuccess(responseData.user)
-          }
-          toast.success(response.data.message);
-
-          return;
-      
+        return;
       } else {
         console.log("Error response in register Api => ", response.data);
         const err =
@@ -104,17 +103,14 @@ export const healthProviderDetailFunApi = createAsyncThunk(
       const response = await axios.post(healthProviderApi, data);
       console.log("response in healthProviderFunApi => ", response.data);
       if (response.data.status === "success") {
+        const responseData = response.data.data;
+        console.log("77", responseData.user);
+        if (onSuccess) {
+          onSuccess(responseData.user);
+        }
+        toast.success(response.data.message);
 
-        const responseData = response.data.data;  
-        console.log("77",responseData.user)       
-          if (onSuccess) {
-
-            onSuccess(responseData.user)
-          }
-          toast.success(response.data.message);
-
-          return;
-      
+        return;
       } else {
         console.log("Error response in health Provider Api => ", response.data);
         const err =
@@ -149,7 +145,7 @@ export const verifyOtpFunApi = createAsyncThunk(
       console.log("response in verifyOtpApi => ", response.data);
       if (response.data.status === "success") {
         localStorage.removeItem("selectedBusinessId");
-        
+
         const responseData = response.data.data;
 
         if (responseData.user.role !== "user") {
@@ -207,7 +203,6 @@ export const checkTokenIsValidFunApi = createAsyncThunk(
       const response = await axios.get(checkTokenIsValidApi);
       console.log("response in checkTokenIsValidFun => ", response.data);
       if (response.data.status === "success") {
-
         // localStorage.removeItem('selectedBusinessId')
         return response.data.data;
       } else {
@@ -269,6 +264,160 @@ export const autoLoginFunApi = createAsyncThunk(
       }
 
       throw error;
+    }
+  }
+);
+
+export const logoutFunApi = createAsyncThunk(
+  "auth/logout",
+  async ({ onSuccess }) => {
+    try {
+      const response = await axios.get(logoutApi);
+      console.log("response in logoutFunApi => ", response.data);
+      if (response.data.status === "success") {
+        // Clear local storage
+        localStorage.clear();
+
+        if (onSuccess) {
+          onSuccess();
+        }
+        toast.success("Logged out successfully");
+        return;
+      } else {
+        console.log("Error response in logout Api => ", response.data);
+        const err =
+          response?.data?.message ||
+          response?.message ||
+          "Something went wrong!";
+        console.log("err: ", err);
+        toast.error(err);
+        throw new Error(err);
+      }
+    } catch (error) {
+      console.log("Error in logout Api ", error);
+      let err =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Something went wrong!";
+      if (err === "Network Error") {
+        err = "Please check your internet connection";
+      }
+      toast.error(err);
+      throw new Error(err);
+    }
+  }
+);
+
+export const getAllUsersFunApi = createAsyncThunk(
+  "auth/getAllUsers",
+  async ({ onSuccess }) => {
+    try {
+      const response = await axios.get(getAllUsersApi);
+      console.log("response in getAllUsers => ", response.data);
+      if (response.data.status === "success") {
+        if (onSuccess) {
+          onSuccess(response.data.data.users);
+        }
+        return response.data.data.users;
+      } else {
+        console.log("Error response in getAllUsers Api => ", response.data);
+        const err =
+          response?.data?.message ||
+          response?.message ||
+          "Something went wrong!";
+        console.log("err: ", err);
+        toast.error(err);
+        throw new Error(err);
+      }
+    } catch (error) {
+      console.log("Error in getAllUsers Api ", error);
+      let err =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Something went wrong!";
+      if (err === "Network Error") {
+        err = "Please check your internet connection";
+      }
+      toast.error(err);
+      throw new Error(err);
+    }
+  }
+);
+
+export const getUserDetailsFunApi = createAsyncThunk(
+  "auth/getUserDetails",
+  async ({ data, onSuccess }) => {
+    console.log(data, "dataaa");
+
+    try {
+      const response = await axios.post(getUserDetailsApi, data);
+      console.log("response in getUserDetails => ", response.data);
+      if (response.data.status === "success") {
+        if (onSuccess) {
+          onSuccess(response.data.data);
+        }
+        return response.data.data;
+      } else {
+        console.log("Error response in getUserDetails Api => ", response.data);
+        const err =
+          response?.data?.message ||
+          response?.message ||
+          "Something went wrong!";
+        console.log("err: ", err);
+        toast.error(err);
+        throw new Error(err);
+      }
+    } catch (error) {
+      console.log("Error in getUserDetails Api ", error);
+      let err =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Something went wrong!";
+      if (err === "Network Error") {
+        err = "Please check your internet connection";
+      }
+      toast.error(err);
+      throw new Error(err);
+    }
+  }
+);
+
+export const updateUserDetailsFunApi = createAsyncThunk(
+  "auth/updateUserDetails",
+  async ({ data, onSuccess }) => {
+    try {
+      const response = await axios.post(updateUserDetailsApi, data);
+      console.log("response in updateUserDetails => ", response.data);
+      if (response.data.status === "success") {
+        if (onSuccess) {
+          onSuccess(response.data.user);
+          toast.success(response.data.message);
+        }
+        return response.data.user;
+      } else {
+        console.log(
+          "Error response in updateUserDetails Api => ",
+          response.data
+        );
+        const err =
+          response?.data?.message ||
+          response?.message ||
+          "Something went wrong!";
+        console.log("err: ", err);
+        toast.error(err);
+        throw new Error(err);
+      }
+    } catch (error) {
+      console.log("Error in updateUserDetails Api ", error);
+      let err =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Something went wrong!";
+      if (err === "Network Error") {
+        err = "Please check your internet connection";
+      }
+      toast.error(err);
+      throw new Error(err);
     }
   }
 );

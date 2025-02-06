@@ -1,1 +1,3 @@
-export const AlDocsSummary = "https://62d7-173-208-156-111.ngrok-free.app/"
+export const AlDocsSummary = "/summeries/document-Summeries"
+export const AlDocsSummaryAudio = "/summeries/file-summeries"
+    
