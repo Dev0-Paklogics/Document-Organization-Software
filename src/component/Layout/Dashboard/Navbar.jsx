@@ -1,11 +1,52 @@
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { autoLoginFunApi } from "store/auth/services";
 
 export const DashboardNavbar = () => {
-  // Fetch user data from Redux store
-  const { firstName, lastName, email } =
-    useSelector((state) => state.auth.user) || {};
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
   const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isComposing, setIsComposing] = useState(false);
+
+  useEffect(() => {
+    // Check if we have a token but no user data
+    const token = localStorage.getItem("token");
+    if (token && (!user || !user.firstName)) {
+      dispatch(autoLoginFunApi({
+        onSuccess: () => {
+          console.log("Auto login successful");
+        }
+      }));
+    }
+  }, [dispatch, user]);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate("/chat", { state: { initialMessage: searchQuery.trim() } });
+      setSearchQuery("");
+      setIsSearchVisible(false);
+    }
+  };
+
+  const handleSearchInputChange = (e) => {
+    setSearchQuery(e.target.value);
+    setIsComposing(true);
+    // Auto-submit after 2 seconds of no typing
+    const timeoutId = setTimeout(() => {
+      setIsComposing(false);
+      if (e.target.value.trim()) {
+        navigate("/chat", { state: { initialMessage: e.target.value.trim() } });
+        setSearchQuery("");
+        setIsSearchVisible(false);
+      }
+    }, 2000);
+
+    return () => clearTimeout(timeoutId);
+  };
 
   return (
     <nav className="bg-[#3A8EF6] relative">
@@ -14,7 +55,7 @@ export const DashboardNavbar = () => {
         {/* Greeting Section - with left padding for mobile menu button */}
         <div className="flex-shrink-0 pl-12 lg:pl-0">
           <h3 className="text-white text-lg md:text-2xl font-bold truncate break-words w-40 md:w-full">
-            Hi, {firstName ? `${firstName} ${lastName}` : "Guest"}
+            Hi, {user?.firstName ? `${user.firstName} ${user.lastName}` : "Guest"}
           </h3>
           <p className="text-white/80 text-xs md:text-sm">Welcome back!</p>
         </div>
@@ -43,7 +84,7 @@ export const DashboardNavbar = () => {
           </button>
 
           {/* Search Bar - Desktop */}
-          <div className="hidden md:flex items-center bg-white px-4 py-2 rounded-full shadow-md">
+          <form onSubmit={handleSearch} className="hidden md:flex items-center bg-white px-4 py-2 rounded-full shadow-md">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -60,10 +101,12 @@ export const DashboardNavbar = () => {
             </svg>
             <input
               type="text"
-              placeholder="Search..."
+              value={searchQuery}
+              onChange={handleSearchInputChange}
+              placeholder="Ask anything with AI..."
               className="ml-2 outline-none bg-transparent text-gray-600 w-40 lg:w-60"
             />
-          </div>
+          </form>
 
           {/* Notification Icon */}
           <div className="relative">
@@ -90,17 +133,26 @@ export const DashboardNavbar = () => {
 
           {/* Profile Picture */}
           <div className="w-10 h-10 rounded-full border-2 border-yellow-400 overflow-hidden">
-            <img
-              src="https://via.placeholder.com/40"
-              alt="Profile"
-              className="w-full h-full object-cover"
-            />
+            {user?.profilePicture ? (
+              <img
+                src={user.profilePicture}
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                <span className="text-gray-400 text-lg">
+                  {user?.firstName?.charAt(0)?.toUpperCase() || "U"}
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
       {/* Mobile Search Bar */}
-      <div
+      <form
+        onSubmit={handleSearch}
         className={`${
           isSearchVisible ? "block" : "hidden"
         } md:hidden absolute w-full px-4 py-3 bg-[#2D7FE7] shadow-lg`}
@@ -122,11 +174,13 @@ export const DashboardNavbar = () => {
           </svg>
           <input
             type="text"
-            placeholder="Search..."
+            value={searchQuery}
+            onChange={handleSearchInputChange}
+            placeholder="Ask anything with AI..."
             className="ml-2 outline-none bg-transparent text-gray-600 w-full"
           />
         </div>
-      </div>
+      </form>
     </nav>
   );
 };
