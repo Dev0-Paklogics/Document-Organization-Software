@@ -47,6 +47,7 @@ export default function App() {
         <Route path="profile-update" element={<ProfileUpdate />} />
         <Route path="document-summeries" element={<Summaries />} />
         <Route path="chat" element={<ChatWithAi />} />
+        <Route path="profile-update/:id" element={<ProfileUpdate />} />
       </Route>
     </Routes>
   );

@@ -95,7 +95,7 @@ const GraphSection = ({ data }) => (
                   stroke="#9CA3AF"
                   width={40}
                   domain={[0, 'dataMax + 20']}
-                  ticks={[0, 65, 130, 195, 260]}
+                  ticks={[0,15, 25, 30, 45]}
                 />
                 <Tooltip content={<CustomTooltip />} />
                 <Bar 
