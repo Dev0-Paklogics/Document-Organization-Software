@@ -34,14 +34,15 @@ export default function App() {
       </Route>
 
       <Route element={<DashboardLayout />}>
-        <Route index element={<DashboardHomePage />} />
-        {/* <Route index element={<AdminDashboardHomePage />} /> */}
+        {/* <Route index element={<DashboardHomePage />} /> */}
+        <Route index element={<AdminDashboardHomePage />} />
         {/* <Route path="doc-managment" element={<DocumentManagment />} /> */}
         <Route path="document-overview" element={<DocumentOverview />} />
         <Route path="document-managment" element={<DocumentManagement />} />
         <Route path="profile-update" element={<ProfileUpdate />} />
         <Route path="document-summeries" element={<Summaries />} />
         <Route path="chat" element={<ChatWithAi />} />
+        <Route path="profile-update/:id" element={<ProfileUpdate />} />
       </Route>
     </Routes>
   );
