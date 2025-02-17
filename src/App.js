@@ -1,54 +1,58 @@
 import { Route, Routes } from "react-router";
-import { DashboardHomePage } from "./pages/Dashboard/Home";
-import DashboardLayout from "./component/Layout/Dashboard/Layout";
-import { DocumentManagement } from "pages/Dashboard/DocumentManagment";
-import { DocumentOverview } from "pages/Dashboard/DocumentOverview";
-import { ProfileUpdate } from "pages/Dashboard/ProfileUpdate";
+import { Suspense } from "react";
+import { useSelector } from "react-redux";
+import Loader from "./component/Loader";
+import { AuthComponents, DashboardPages, AdminPages, Layouts, withRoleAccess } from "./helper/pages-routes";
 
-import { Login } from "component/Layout/AuthLayout/Auth/Login";
-import { AuthLayout } from "component/Layout/AuthLayout/Layout";
-import { Signup } from "component/Layout/AuthLayout/Auth/Signup";
-import { HealthProvider } from "component/Layout/AuthLayout/Auth/healthProvider";
-import { ForgetPassword } from "component/Layout/AuthLayout/Auth/forgetPassword";
-import { PasswordSuccess } from "component/Layout/AuthLayout/Auth/passwordSucess";
-import { ResetPassword } from "component/Layout/AuthLayout/Auth/resetPassword";
-import { OtpForm } from "component/Layout/AuthLayout/Auth/Otp";
-import { Summaries } from "pages/Dashboard/Summeries";
-import ChatWithAi from "./pages/Dashboard/ChatWithAi";
-import AdminDashboardHomePage from "pages/AdminDashboard/AdminDashboardHomePage";
-import AdminDocumentManagment from "pages/AdminDashboard/AdminDocumentManagment";
-import AdminUserManagement from "pages/AdminDashboard/AdminUserManagement";
+const ProtectedAdminUserManagement = withRoleAccess(AdminPages.AdminUserManagement, ['super-admin']);
+const ProtectedAdminDashboard = withRoleAccess(AdminPages.AdminDashboardHomePage, ['super-admin']);
+const ProtectedAdminDocumentManagement = withRoleAccess(AdminPages.AdminDocumentManagment, ['super-admin']);
+
+const ProtectedDashboardHome = withRoleAccess(DashboardPages.DashboardHomePage, ['patient']);
+const ProtectedDocumentManagement = withRoleAccess(DashboardPages.DocumentManagement, ['patient']);
+
+const SuspenseWrapper = ({ children }) => (
+  <Suspense fallback={<Loader />}>
+    {children}
+  </Suspense>
+);
 
 export default function App() {
-  
+  const { role } = useSelector(state => state.auth);
+  const isPatient = role === "patient";
+
   return (
-    <Routes>
-      {/* <Route index element={<Home />} /> */}
-      {/* <Route path="about" element={<About />} /> */}
+    <SuspenseWrapper>
+      <Routes>
+        <Route element={<SuspenseWrapper><Layouts.AuthLayout /></SuspenseWrapper>}>
+          <Route path="login" element={<SuspenseWrapper><AuthComponents.Login /></SuspenseWrapper>} />
+          <Route path="signup" element={<SuspenseWrapper><AuthComponents.Signup /></SuspenseWrapper>} />
+          <Route path="health-provider" element={<SuspenseWrapper><AuthComponents.HealthProvider /></SuspenseWrapper>} />
+          <Route path="enter-otp" element={<SuspenseWrapper><AuthComponents.OtpForm /></SuspenseWrapper>} />
+          <Route path="forget-password" element={<SuspenseWrapper><AuthComponents.ForgetPassword /></SuspenseWrapper>} />
+          <Route path="reset-password" element={<SuspenseWrapper><AuthComponents.ResetPassword /></SuspenseWrapper>} />
+          <Route path="password-success" element={<SuspenseWrapper><AuthComponents.PasswordSuccess /></SuspenseWrapper>} />
+        </Route>
 
-      <Route element={<AuthLayout />}>
-        <Route path="login" element={<Login />} />
-        <Route path="signup" element={<Signup />} />
-        <Route path="health-provider" element={<HealthProvider />} />
-        <Route path="enter-otp" element={<OtpForm />} />
-        <Route path="forget-password" element={<ForgetPassword />} />
-        <Route path="reset-password" element={<ResetPassword />} />
-        <Route path="password-success" element={<PasswordSuccess />} />
-      </Route>
-
-      <Route element={<DashboardLayout />}>
-        <Route index element={<DashboardHomePage />} />
-        {/* <Route index element={<AdminDashboardHomePage />} /> */}
-
-        <Route path="document-overview" element={<DocumentOverview />} />
-        <Route path="document-managment" element={<DocumentManagement />} />
-        {/* <Route path="document-managment" element={<AdminDocumentManagment />} /> */}
-        <Route path="user-management" element={<AdminUserManagement />} />
-        <Route path="profile-update" element={<ProfileUpdate />} />
-        <Route path="document-summeries" element={<Summaries />} />
-        <Route path="chat" element={<ChatWithAi />} />
-        <Route path="profile-update/:id" element={<ProfileUpdate />} />
-      </Route>
-    </Routes>
+        <Route element={<SuspenseWrapper><Layouts.DashboardLayout /></SuspenseWrapper>}>
+          <Route index element={
+            <SuspenseWrapper>
+              {isPatient ? <ProtectedDashboardHome /> : <ProtectedAdminDashboard />}
+            </SuspenseWrapper>
+          } />
+          <Route path="document-overview" element={<SuspenseWrapper><DashboardPages.DocumentOverview /></SuspenseWrapper>} />
+          <Route path="document-managment" element={
+            <SuspenseWrapper>
+              {isPatient ? <ProtectedDocumentManagement /> : <ProtectedAdminDocumentManagement />}
+            </SuspenseWrapper>
+          } />
+          <Route path="user-management" element={<SuspenseWrapper><ProtectedAdminUserManagement /></SuspenseWrapper>} />
+          <Route path="profile-update" element={<SuspenseWrapper><DashboardPages.ProfileUpdate /></SuspenseWrapper>} />
+          <Route path="document-summeries" element={<SuspenseWrapper><DashboardPages.Summaries /></SuspenseWrapper>} />
+          <Route path="chat" element={<SuspenseWrapper><DashboardPages.ChatWithAi /></SuspenseWrapper>} />
+          <Route path="profile-update/:id" element={<SuspenseWrapper><DashboardPages.ProfileUpdate /></SuspenseWrapper>} />
+        </Route>
+      </Routes>
+    </SuspenseWrapper>
   );
 }

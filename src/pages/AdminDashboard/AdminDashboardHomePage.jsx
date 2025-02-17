@@ -25,15 +25,32 @@ const AdminDashboardHomePage = () => {
     console.log("userDocument 23", userDocumentCount);
 
     return users.map((user, index) => ({
-      name: user._id || `User-${index}`, // Ensure name is unique
+      name: index + 1,  // Use index for X-axis positioning
+      displayName: `${user.firstName} ${user.lastName}`,  // For display purposes
       value: userDocumentCount[user.id] || 0,
-      userImage: `https://i.pravatar.cc/30?img=${index + 1}`,
+      userImage: user.profilePicture || `https://i.pravatar.cc/30?img=${index + 1}`,
     }));
   };
 
   // Transform data for graph
   const graphData = transformUserDocumentData(allUsers, documentData);
-  console.log("graph Data", graphData);
+
+  const transformUserDocumentData2 = (users, documents) => {
+    const userDocumentCount = documents.reduce((acc, doc) => {
+      acc[doc.userId] = (acc[doc.userId] || 0) + 1;
+      return acc;
+    }, {});
+    console.log("userDocument 23", userDocumentCount);
+
+    return users.map((user, index) => ({
+      name: index + 1,  // Use index for X-axis positioning
+      value: userDocumentCount[user.id] || 0,
+      userImage: user.profilePicture || `https://i.pravatar.cc/30?img=${index + 1}`,
+    }));
+  };
+
+  // Transform data for graph
+  const graphData2 = transformUserDocumentData2(allUsers, documentData);
 
   // Transform data for table (keeping existing format)
   const transformedUsers = allUsers.map((user, index) => ({
@@ -47,7 +64,7 @@ const AdminDashboardHomePage = () => {
       year: "numeric",
     }),
     phone: user.phone?.number || "N/A",
-    userImage: `https://i.pravatar.cc/30?img=${index + 1}`,
+    userImage: user.profilePicture || `https://i.pravatar.cc/30?img=${index + 1}`,
     value:
       graphData.find(
         (data) => data.name === `${user.firstName} ${user.lastName}`
@@ -64,7 +81,7 @@ const AdminDashboardHomePage = () => {
       <style>{styles}</style>
       <DashboardHeader />
       <StatsGrid />
-      <GraphSection data={graphData} />
+      <GraphSection data={graphData} data2={graphData2} />
       <UsersTable users={transformedUsers} />
     </div>
   );
