@@ -12,7 +12,7 @@ export const DashboardLayout = () => {
   const [isAgreed, setIsAgreed] = useState(false);
   const dispatch = useDispatch();
 
-  const { isAuthenticated, role, otpVerified, validToken } = useSelector(
+const { isAuthenticated, role, otpVerified, validToken } = useSelector(
     (state) => state.auth
   );
   console.log("isAuth 17", isAuthenticated)

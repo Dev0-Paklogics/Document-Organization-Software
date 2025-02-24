@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FiTrash2, FiEdit2 } from "react-icons/fi";
 
-export default function DataTable({
+export default function  UsersTableData({
   data,
   columns,
   enabledStates,
@@ -10,6 +10,7 @@ export default function DataTable({
   onEdit,
   rowsPerPage = 5, // Default rows per page
 }) {
+    console.log("dat", data)
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(data.length / rowsPerPage);
 
@@ -24,7 +25,7 @@ export default function DataTable({
             {columns.map((column) => (
               <th key={column.key} className="p-3">{column.label}</th>
             ))}
-            <th className="p-3">File</th>
+            {/* <th className="p-3">File</th> */}
             <th className="p-3">Active/Inactive</th>
             <th className="p-3">Actions</th>
           </tr>
@@ -35,24 +36,24 @@ export default function DataTable({
               <tr key={item.docsId} className="border-b hover:bg-gray-50 text-center">
                 
                 {/* Document ID */}
-                <td className="p-3">{item.docsId || "N/A"}</td>
+                <td className="p-3">{item.id || "N/A"}</td>
                 
                 {/* User Name */}
-                <td className="p-3">{item.userName || "N/A"}</td>
+                <td className="p-3">{item.name || "N/A"}</td>
                 
                 {/* User Email */}
-                <td className="p-3">{item.userEmail || "N/A"}</td>
+                <td className="p-3">{item.email || "N/A"}</td>
 
                 {/* Date Created */}
                 <td className="p-3">
-                  {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "N/A"}
+                  {item.date ? new Date(item.date).toLocaleDateString() : "N/A"}
                 </td>
 
                 {/* Category */}
-                <td className="p-3">{item.category || "N/A"}</td>
+                <td className="p-3">{item.phone || "N/A"}</td>
                 
                 {/* File URL */}
-                <td className="p-3">
+                {/* <td className="p-3">
                   {item.fileUrl ? (
                     <a href={item.fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">
                       View File
@@ -60,7 +61,7 @@ export default function DataTable({
                   ) : (
                     "No File"
                   )}
-                </td>
+                </td> */}
 
                 {/* Toggle Active/Inactive */}
                 <td className="p-3">

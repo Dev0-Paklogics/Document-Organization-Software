@@ -8,6 +8,7 @@ const ProtectedAdminUserManagement = withRoleAccess(AdminPages.AdminUserManageme
 const ProtectedAdminDashboard = withRoleAccess(AdminPages.AdminDashboardHomePage, ['super-admin']);
 const ProtectedAdminDocumentManagement = withRoleAccess(AdminPages.AdminDocumentManagment, ['super-admin']);
 
+
 const ProtectedDashboardHome = withRoleAccess(DashboardPages.DashboardHomePage, ['patient']);
 const ProtectedDocumentManagement = withRoleAccess(DashboardPages.DocumentManagement, ['patient']);
 
