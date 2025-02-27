@@ -3,14 +3,15 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import axios from "helper/api";
 import toast from "react-hot-toast";
+import { getallDocsFunApi } from "store/document/services";
+import { useDispatch } from "react-redux";
 
-const DocumentAssignModal = ({selectedFile ,handleCloseModal }) => {
-    console.log("selectedFile", selectedFile);
+const DocumentAssignModal = ({ selectedFile, handleCloseModal }) => {
+  const dispatch = useDispatch();
+  console.log("selectedFile", selectedFile);
 
   const [patients, setPatients] = useState([]);
-  console.log("patin", patients);
   const [categories, setCategories] = useState([]);
-  console.log("categ", categories);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,32 +48,41 @@ const DocumentAssignModal = ({selectedFile ,handleCloseModal }) => {
       categoryId: "",
     },
     validationSchema: Yup.object({
-    //   patientId: Yup.string().required("Please select a patient"),
-    //   categoryId: Yup.string().required("Please select a category"),
-    //   document: Yup.mixed().required("A document is required"),
+      //   patientId: Yup.string().required("Please select a patient"),
+      //   categoryId: Yup.string().required("Please select a category"),
+      //   document: Yup.mixed().required("A document is required"),
     }),
     onSubmit: async (values) => {
-        console.log("values", values)
+      console.log("values", values);
       const formData = new FormData();
       formData.append("file", selectedFile);
       formData.append("patientId", values.patientId);
       formData.append("categoryId", values.categoryId);
 
       try {
-        const response = await axios.post("/doc/assignDocstoPatientApi", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
+        const response = await axios.post(
+          "/doc/assignDocstoPatientApi",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
 
         console.log("File uploaded successfully:", response.data);
-        if (response.status === "success"){
-            toast.success(response.message);
-        }
+
+        toast.success(response.data.message || "File uploaded successfully!");
+
+        await dispatch(getallDocsFunApi());
 
         handleCloseModal();
       } catch (error) {
         console.error("Error uploading file:", error);
+        toast.error(
+          error.response?.data?.message || "Error uploading document."
+        );
+      } finally {
       }
     },
   });

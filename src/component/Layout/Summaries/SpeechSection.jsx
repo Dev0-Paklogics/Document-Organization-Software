@@ -22,6 +22,9 @@ const SpeechSection = ({
   audioFile,
   formatTime
 }) => {
+
+  console.log("summary in speech section", summary)
+  console.log("running")
   return (
     <div className="flex flex-col items-center py-10">
       <div className="w-11/12 md:w-3/4 bg-white shadow-lg rounded-lg p-6">

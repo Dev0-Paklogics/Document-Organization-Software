@@ -3,10 +3,13 @@ import { Suspense } from "react";
 import { useSelector } from "react-redux";
 import Loader from "./component/Loader";
 import { AuthComponents, DashboardPages, AdminPages, Layouts, withRoleAccess } from "./helper/pages-routes";
+import { AdminDashboardHomePage } from "./pages";
 
 const ProtectedAdminUserManagement = withRoleAccess(AdminPages.AdminUserManagement, ['super-admin']);
 const ProtectedAdminDashboard = withRoleAccess(AdminPages.AdminDashboardHomePage, ['super-admin']);
 const ProtectedAdminDocumentManagement = withRoleAccess(AdminPages.AdminDocumentManagment, ['super-admin']);
+const ProtectedInvitation = withRoleAccess(AdminPages.AdminInvitation, ['super-admin']);
+
 
 
 const ProtectedDashboardHome = withRoleAccess(DashboardPages.DashboardHomePage, ['patient']);
@@ -48,11 +51,14 @@ export default function App() {
             </SuspenseWrapper>
           } />
           <Route path="user-management" element={<SuspenseWrapper><ProtectedAdminUserManagement /></SuspenseWrapper>} />
+          <Route path="admin-management" element={<SuspenseWrapper><ProtectedInvitation /></SuspenseWrapper>} />
           <Route path="profile-update" element={<SuspenseWrapper><DashboardPages.ProfileUpdate /></SuspenseWrapper>} />
           <Route path="document-summeries" element={<SuspenseWrapper><DashboardPages.Summaries /></SuspenseWrapper>} />
+                    <Route path="summary-history" element={<SuspenseWrapper><DashboardPages.DocumentHistory /></SuspenseWrapper>} />
           <Route path="chat" element={<SuspenseWrapper><DashboardPages.ChatWithAi /></SuspenseWrapper>} />
           <Route path="profile-update/:id" element={<SuspenseWrapper><DashboardPages.ProfileUpdate /></SuspenseWrapper>} />
-        </Route>
+
+        </Route> 
       </Routes>
     </SuspenseWrapper>
   );

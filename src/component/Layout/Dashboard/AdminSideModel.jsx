@@ -8,7 +8,6 @@ const AdminSideModal = ({
   handleCloseModal,
   isLoading,
 }) => {
-  const [folderName, setFolderName] = useState("");
   const [showModal, setShowModal] = useState(false);
 
   const handleNext = () => {
@@ -30,7 +29,7 @@ const AdminSideModal = ({
             name="folderName"
             placeholder="Add label to your file"
             value={formik.values.folderName}
-            onChange={(e) => setFolderName(e.target.value)}
+            onChange={(e) => formik.setFieldValue("folderName", e.target.value)} // ✅ Update Formik's state
             onBlur={formik.handleBlur}
             className="w-full p-2 md:p-3 border rounded-lg mb-6 md:mb-10 focus:outline-none"
           />
@@ -42,9 +41,6 @@ const AdminSideModal = ({
             >
               Cancel
             </button>
-          </div>
-
-          <div className="flex justify-end space-x-4">
             <button
               type="button"
               className="px-6 md:px-12 py-2 md:py-3 border rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
@@ -57,10 +53,9 @@ const AdminSideModal = ({
           {showModal && (
             <DocumentAssignModal
               selectedFile={selectedFile}
-              folderName={folderName}
+              folderName={formik.values.folderName} // ✅ Pass updated Formik state
               formik={formik}
               handleCloseModal={handleCloseModal}
-              //   isLoading={isUploading}
             />
           )}
         </div>

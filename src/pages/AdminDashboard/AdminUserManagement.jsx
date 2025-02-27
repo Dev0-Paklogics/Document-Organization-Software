@@ -68,10 +68,6 @@ export default function AdminUserManagement() {
     );
   };
 
-  // useEffect(() => {
-  //   setEnabled(Array(transformedUsers.length).fill(true));
-  // }, [transformedUsers.length]);
-
   const handleToggle = (index) => {
     const newEnabled = [...enabled];
     newEnabled[index] = !newEnabled[index];
@@ -116,7 +112,7 @@ export default function AdminUserManagement() {
             onEdit={handleEdit}
           />
 
-          {usersData?.pagination && (
+          {/* {usersData?.pagination && (
             <div className="p-4">
               <Pagination
                 currentPage={currentPage}
@@ -125,7 +121,7 @@ export default function AdminUserManagement() {
                 totalResults={usersData.pagination.totalUsers}
               />
             </div>
-          )}
+          )} */}
         </>
       )}
 

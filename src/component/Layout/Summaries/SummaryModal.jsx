@@ -4,6 +4,8 @@ import ButtonWithLoading from 'component/LoadingButton';
 
 const SummaryModal = ({ doc, onClose, handleGenerateSummary, isGenerating }) => {
   const [showModalCopyTooltip, setShowModalCopyTooltip] = useState(false);
+  console.log("doc", doc)
+
 
   const handleModalCopy = (text) => {
     navigator.clipboard.writeText(text);
