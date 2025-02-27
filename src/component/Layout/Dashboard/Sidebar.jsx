@@ -25,7 +25,11 @@ const sidebar = [
     icon: <FaUser />,
     link: "/user-management",
   },
-  
+  {
+    name: "Kyc Management",
+    icon: <FaUser />,
+    link: "/kyc-management",
+  },
   {
     name: "Admin Management",
     icon: <FaUser />,
@@ -68,12 +72,14 @@ export const SideBarDashboard = () => {
 
   useEffect(() => {
     if (role === "patient") {
-      setSidebarList(sidebar.filter(item => item.link !== "/admin-management"));
+      setSidebarList(
+        sidebar.filter((item) => item.link !== "/admin-management" && item.link !== "/kyc-management" )
+      );
     } else {
-      setSidebarList([...sidebar.slice(0, 4)]);
+      setSidebarList([...sidebar.slice(0, 5)]);
     }
   }, [role]);
-  
+
   const handleToggle = () => {
     setIsOpen(!isOpen);
   };
@@ -124,7 +130,7 @@ export const SideBarDashboard = () => {
               strokeWidth={2}
               d="M4 6h16M4 12h16M4 18h16"
             />
-        </svg>
+          </svg>
         )}
       </button>
 

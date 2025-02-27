@@ -17,10 +17,9 @@ export const Summaries = () => {
   const [file, setFile] = useState(null);
   const [audioFile, setAudioFile] = useState(null);
   const [summary, setSummary] = useState();
-  console.log("summary", summary?.message)
-  console.log("21" ,summary)
+  console.log("summary", summary?.message);
   const [docDetails, setdocDetails] = useState();
-  console.log("docDetails", docDetails)
+  console.log("docDetails", docDetails);
 
   const [audioUrl, setAudioUrl] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
@@ -113,16 +112,15 @@ export const Summaries = () => {
 
     if (file) formData.append("file", file);
     if (audioFile) formData.append("file", audioFile);
-    console.log("audio file1", audioFile)
+    console.log("audio file1", audioFile);
     formData.append("id", user?.id);
     formData.append("folderName", values.folderName);
-    formData.append("summary", summary?.health_summary  || summary.message  );
-    if(!audioFile){
+    formData.append("summary", summary?.health_summary || summary.message);
+    if (!audioFile) {
       formData.append("docDetails", docDetails?.doctor_name);
-
     }
     console.log("claaaaa");
-  
+
     try {
       await dispatch(
         UploadDocumentApi({
@@ -174,7 +172,6 @@ export const Summaries = () => {
         onError: (error) => console.error("Upload failed", error),
       })
     );
-    
   };
 
   const handleRecording = async () => {
@@ -339,7 +336,14 @@ export const Summaries = () => {
           handleDelete={handleDelete}
           handleUpload={handleUpload}
           isLoading={isLoading}
-          summary={summary?.health_summary}
+          summary={
+            summary?.message ||
+            (Array.isArray(summary) && summary.length > 0
+              ? `${summary[0]?.health_summary || ""}\n${
+                  summary[1] || ""
+                }`.trim()
+              : null)
+          }
           handleCopy={handleCopy}
           showCopyTooltip={showCopyTooltip}
           handleCancel={handleCancel}
@@ -354,7 +358,11 @@ export const Summaries = () => {
           audioRecorderRef={audioRecorderRef}
           onRecordingComplete={handleRecordingComplete}
           audioUrl={audioUrl}
-          summary={summary?.message || summary?.health_summary}
+          summary = {summary?.message ||
+  (Array.isArray(summary) && summary.length > 0
+    ? `${summary[0]?.health_summary || ""}\n\n${summary[1] || ""}`.trim()
+    : null)}
+
           handleCopy={handleCopy}
           showCopyTooltip={showCopyTooltip}
           handleCancel={handleCancel}

@@ -25,13 +25,16 @@ const AuthComponents = {
     Summaries: lazy(() => import("../pages/Dashboard/Summeries").then(module => ({ default: module.Summaries }))),
     DocumentHistory: lazy(() => import("../pages/Dashboard/DocumentHistory").then(module => ({ default: module.DocumentHistory }))),
     ChatWithAi: lazy(() => import("../pages/Dashboard/ChatWithAi")),
+    // KycManagement: lazy(() => import("../pages/Dashboard/KycManagement")),
+
   };
   
   const AdminPages = {
     AdminDashboardHomePage: lazy(() => import("../pages/AdminDashboard/AdminDashboardHomePage")),
     AdminDocumentManagment: lazy(() => import("../pages/AdminDashboard/AdminDocumentManagment")),
     AdminUserManagement: lazy(() => import("../pages/AdminDashboard/AdminUserManagement")),
-    AdminInvitation: lazy(() => import("../pages/AdminDashboard/AdminInvitation"))
+    AdminInvitation: lazy(() => import("../pages/AdminDashboard/AdminInvitation")),
+    KycManagement: lazy(() => import("../pages/AdminDashboard/KycManagement"))
   };
   
   const Layouts = {
