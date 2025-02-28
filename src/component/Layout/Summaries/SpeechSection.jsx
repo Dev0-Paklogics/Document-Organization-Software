@@ -13,6 +13,7 @@ const SpeechSection = ({
   onRecordingComplete,
   audioUrl,
   summary,
+  text,
   handleCopy,
   showCopyTooltip,
   handleCancel,
@@ -22,6 +23,8 @@ const SpeechSection = ({
   audioFile,
   formatTime,
 }) => {
+  console.log("text", text);
+
   console.log("summary in speech section", summary);
   console.log("runnin");
   return (
@@ -145,18 +148,9 @@ const SpeechSection = ({
               </div>
             )}
           </div>
-          <p>
-            {summary?.split("\n\n").map((line, index) => (
-              <span key={index}>
-                {line}
-        
-                <br/>
-               
-                <br />
-                
-              </span>
-            ))}
-          </p>
+          <p className="text-gray-600">{summary}</p>
+          {text && <h3 className="text-lg font-medium text-gray-700">Text</h3>}
+          <p className="text-gray-600">{text}</p>
         </div>
         <div className="flex justify-end gap-4 mt-4">
           {summary && (

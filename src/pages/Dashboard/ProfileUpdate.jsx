@@ -466,7 +466,7 @@ export const ProfileUpdate = () => {
           </div>
         )}
 
-        <div className="fixed bottom-4 sm:bottom-10 right-4 sm:right-10 flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0 w-[calc(100%-2rem)] sm:w-auto">
+        <div className=" bottom-4 sm:bottom-10 right-4 sm:right-10 flex flex-col sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0 w-[calc(100%-2rem)] sm:w-auto">
           <button
             type="button"
             className="w-full sm:w-40 bg-red-500 text-white rounded-md py-3 hover:bg-red-600"

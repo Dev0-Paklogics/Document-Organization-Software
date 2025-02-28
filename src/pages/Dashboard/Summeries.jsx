@@ -17,7 +17,8 @@ export const Summaries = () => {
   const [file, setFile] = useState(null);
   const [audioFile, setAudioFile] = useState(null);
   const [summary, setSummary] = useState();
-  console.log("summary", summary?.message);
+  console.log("summary", summary);
+  const [text, setText] = useState();
   const [docDetails, setdocDetails] = useState();
   console.log("docDetails", docDetails);
 
@@ -115,11 +116,27 @@ export const Summaries = () => {
     console.log("audio file1", audioFile);
     formData.append("id", user?.id);
     formData.append("folderName", values.folderName);
-    formData.append("summary", summary?.health_summary || summary.message);
+    if (file) {
+      formData.append("summary", summary?.health_summary);
+    }
+    if (audioFile) {
+      formData.append(
+        "summary",
+        Array.isArray(summary) && summary.length > 0
+          ? summary[0]?.health_summary || summary[0]?.message || null
+          : null
+      );
+    }
+    if (audioFile) {
+      formData.append(
+        "text",
+        Array.isArray(text) && text.length > 0 ? text[1].trim() : null
+      );
+    }
+
     if (!audioFile) {
       formData.append("docDetails", docDetails?.doctor_name);
     }
-    console.log("claaaaa");
 
     try {
       await dispatch(
@@ -129,6 +146,7 @@ export const Summaries = () => {
             setFile(null);
             setAudioFile(null);
             setSummary(null);
+            setText(null);
             setdocDetails(null); // Reset doctor details as well
             setShowModal(false);
             setIsGenerating(false);
@@ -166,6 +184,7 @@ export const Summaries = () => {
         data: formData,
         isFile: file ? true : false,
         onSuccess: (data) => {
+          setText(data);
           setSummary(data);
           setdocDetails(data?.doctor_details); // Extract doctor details from response
         },
@@ -286,8 +305,9 @@ export const Summaries = () => {
           data: formData,
           isFile: true,
           onSuccess: (data) => {
+            setText(data);
             setSummary(data.message);
-            setdocDetails(data?.doctor_details); // Extract doctor details and set state
+            setdocDetails(data?.doctor_details);
             dispatch(
               getallDocsFunApi({
                 onSuccess: () => {},
@@ -336,14 +356,7 @@ export const Summaries = () => {
           handleDelete={handleDelete}
           handleUpload={handleUpload}
           isLoading={isLoading}
-          summary={
-            summary?.message ||
-            (Array.isArray(summary) && summary.length > 0
-              ? `${summary[0]?.health_summary || ""}\n${
-                  summary[1] || ""
-                }`.trim()
-              : null)
-          }
+          summary={summary?.health_summary}
           handleCopy={handleCopy}
           showCopyTooltip={showCopyTooltip}
           handleCancel={handleCancel}
@@ -358,11 +371,15 @@ export const Summaries = () => {
           audioRecorderRef={audioRecorderRef}
           onRecordingComplete={handleRecordingComplete}
           audioUrl={audioUrl}
-          summary = {summary?.message ||
-  (Array.isArray(summary) && summary.length > 0
-    ? `${summary[0]?.health_summary || ""}\n\n${summary[1] || ""}`.trim()
-    : null)}
-
+          text={Array.isArray(text) && text.length > 0 ? text[1].trim() : null}
+          summary={
+            (Array.isArray(summary) && summary.length > 0
+              ? summary[0]?.message
+              : null) ||
+            (Array.isArray(summary) && summary.length > 0
+              ? summary[0]?.health_summary
+              : null)
+          }
           handleCopy={handleCopy}
           showCopyTooltip={showCopyTooltip}
           handleCancel={handleCancel}
